@@ -1,6 +1,7 @@
 # Cloud Browser
 
 Cloud Browser which takes over the processing of webpages for older devices.
+
 Made for the project AWT at TU-Berlin and Fraunhofer FOKUS.
 
 ## Getting Started
@@ -27,8 +28,10 @@ npm install
 
 ### Limitations
 
-Current Limitaitons:
+Current Limitations:
+
 Macs are currently limited to 6 fps, ubuntu should be able to achieve up to 25 fps.
+
 Solution: Switch over to MediaRecorder API
 
 ## ToDos
