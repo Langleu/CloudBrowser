@@ -1,6 +1,7 @@
 <html>
 <header>
     <title>Cloud-Browser</title>
+    <link href="//vjs.zencdn.net/7.3.0/video-js.min.css" rel="stylesheet">
 </header>
 
 <body>
@@ -9,16 +10,31 @@
             <input id="uri-text" type="text">
         </form>
     </div>
-    <img id="photo" style="position: fixed;left:0px;top:60px" />
+    <!--<img id="photo" style="position: fixed;left:0px;top:60px" />-->
+    <!--<video id="video" class="video-js" controls preload="auto" poster="//vjs.zencdn.net/v/oceans.png" data-setup='{}'>
+  <source id="videoSrc" src="" type="video/webm"></source>
+  <p class="vjs-no-js">
+    To view this video please enable JavaScript, and consider upgrading to a
+    web browser that
+    <a href="http://videojs.com/html5-video-support/" target="_blank">
+      supports HTML5 video
+    </a>
+  </p>
+</video>-->
+    <!--<video loop controls id="video"><source id="videoSrc" src="" type="video/webm" /></video>-->
+    <div id='videoContainer'>
+
+    </div>
     <br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
     <br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
     <br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
     <br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
     <br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
-    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+    <script src="vendor/socket.io.js"></script>
+    <script src="vendor/jquery.min.js"></script>
     <script src="js/cb-ws.js"></script>
+    <script src="//vjs.zencdn.net/7.3.0/video.min.js"></script>
 </body>
 
 </html>

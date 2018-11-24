@@ -13,17 +13,72 @@ $(document).ready(function() {
 
     socket.emit('hello', 'world');
 
+    let blobs = [];
+
     socket.on('news', function(data) {
+        /**
+        console.log(data.data);
+
+        $("#video").remove();
+
+        var video = $('<video />', {
+            id: 'video',
+            src: data.data,
+            type: 'video/webm',
+            controls: true
+        });
+        video.appendTo($('#videoContainer'));
+
+        */
+
+        blobs.push(new Uint8Array(str2ab(data.data)));
+
+        //let blob = new Blob([new Uint8Array(str2ab(data.data))], { type: 'video/webm' });
+        let blob = new Blob(blobs, { type: 'video/webm' });
+        var urlCreator = window.URL || window.webkitURL;
+        var url = urlCreator.createObjectURL(blob);
+
+        $("#video").remove();
+
+        var video = $('<video />', {
+            id: 'video',
+            src: url,
+            type: 'video/webm',
+            controls: true
+        });
+        video.appendTo($('#videoContainer'));
+
+        /**
+        var superBuffer = new Blob([data.data], { type: 'video/webm' })
+
+        var urlCreator = window.URL || window.webkitURL;
+        var url = urlCreator.createObjectURL(superBuffer);
+ */
+        //let video = document.querySelector('#video');
+        //let videoSrc = document.querySelector('#videoSrc');
+        //let video = videojs('video');
+
+        //video.src({ type: "video/webm", src: data.data });
+        //video.load();
+        //video.pause();
+        //console.log(url);
+        //videoSrc.src = data.data;
+        //video.load();
+        //video.play();
+
         //console.log(data.data);
 
+        /**
         var arrayBufferView = new Uint8Array(data.data);
         var blob = new Blob([arrayBufferView], {
             type: "image/jpeg"
         });
         var urlCreator = window.URL || window.webkitURL;
         var imageUrl = urlCreator.createObjectURL(blob);
+        console.log(imageUrl);
         var img = document.querySelector("#photo");
         img.src = imageUrl;
+         */
 
 
         //var img = document.querySelector("#photo");
@@ -76,3 +131,12 @@ $(document).ready(function() {
         event.preventDefault();
     });
 });
+
+function str2ab(str) {
+    var buf = new ArrayBuffer(str.length * 2); // 2 bytes for each char
+    var bufView = new Uint8Array(buf);
+    for (var i = 0, strLen = str.length; i < strLen; i++) {
+        bufView[i] = str.charCodeAt(i);
+    }
+    return buf;
+}
