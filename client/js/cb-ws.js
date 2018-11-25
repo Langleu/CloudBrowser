@@ -1,5 +1,5 @@
 $(document).ready(function() {
-    const socket = io.connect('http://localhost:8000');
+    const socket = io.connect('http://localhost:8000', { perMessageDeflate: false });
 
     socket.on('requestScreen', function(data) {
         console.log(data);
@@ -12,10 +12,60 @@ $(document).ready(function() {
     });
 
     socket.emit('hello', 'world');
+    let queue = [];
+    let video = document.getElementById('webmVideo');
 
-    let blobs = [];
+    if ('MediaSource' in window && MediaSource.isTypeSupported('video/webm; codecs="vp8"')) {
+        var mediaSource = new MediaSource;
 
+        video.src = URL.createObjectURL(mediaSource);
+        mediaSource.addEventListener('sourceopen', sourceOpen, { once: true });
+    }
+
+    function sourceOpen(_) {
+        //console.log(this.readyState); // open
+        var mediaSource = this;
+        var sourceBuffer = mediaSource.addSourceBuffer('video/webm; codecs="vp8"');
+
+        video.play();
+
+        socket.on('news', function(data) {
+            console.log(`queue: ${queue.length}`);
+            console.log(`sourceBuffer: ${sourceBuffer.updating}`);
+            console.log(`readyState: ${mediaSource.readyState}`);
+            if (!sourceBuffer.updating && mediaSource.readyState === 'open' && queue.length != 0) {
+                console.log('adding to sourceBuffer');
+                sourceBuffer.appendBuffer(queue.shift());
+            }
+            //console.log(mediaSource.readyState); // ended
+            console.log('adding to queue');
+            queue.push(str2ab(data.data));
+        });
+    };
+
+    /**
+        let blobs = [];
+        let sourceBuffer = null;
+
+        let ms = new MediaSource();
+
+        let video = document.getElementById('webmVideo');
+        video.src = window.URL.createObjectURL(ms);
+
+        ms.addEventListener('sourceopen', function(e) {
+            sourceBuffer = ms.addSourceBuffer('video/webm;codecs="vp8"');
+            ms.duration = 0;
+            socket.on('news', function(data) {
+                ms.endOfStream();
+                ms.duration += 1;
+                video.play();
+                console.log('appending buffer');
+                sourceBuffer.appendBuffer(new Uint8Array(str2ab(data.data)));
+            });
+        }, false);
+    **/
     socket.on('news', function(data) {
+        return;
         /**
         console.log(data.data);
 
@@ -31,6 +81,10 @@ $(document).ready(function() {
 
         */
 
+        console.log('appending to sourceBuffer');
+        //ms.duration += 1;
+        sourceBuffer.appendBuffer(new Uint8Array(str2ab(data.data)));
+        return;
         blobs.push(new Uint8Array(str2ab(data.data)));
 
         //let blob = new Blob([new Uint8Array(str2ab(data.data))], { type: 'video/webm' });

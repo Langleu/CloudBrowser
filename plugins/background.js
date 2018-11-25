@@ -30,10 +30,10 @@ chrome.runtime.onConnect.addListener(port => {
                     var chunks = [];
                     console.log('continue');
                     recorder = new MediaRecorder(stream, {
-                        audioBitsPerSecond: 128000,
-                        videoBitsPerSecond: 2500000,
-                        ignoreMutedMedia: false,
-                        mimeType: 'video/webm'
+                        //audioBitsPerSecond: 128000,
+                        //videoBitsPerSecond: 2500000,
+                        //ignoreMutedMedia: false,
+                        mimeType: 'video/webm;codecs=vp8'
                     });
                     recorder.ondataavailable = function(event) {
                         if (event.data.size > 0) {

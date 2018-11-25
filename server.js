@@ -6,13 +6,14 @@ const server = require('http').Server(app);
 const io = require('socket.io')(server);
 
 const fs = require('fs');
+const WebSocket = require('ws');
 
-//const Xvfb = require('xvfb');
-//var xvfb = new Xvfb();
+const Xvfb = require('xvfb');
+var xvfb = new Xvfb();
 
 const puppeteer = require('puppeteer');
 
-server.listen(8000);
+server.listen(8000, { perMessageDeflate: false });
 console.log('Listening on port 8000');
 
 app.use(express.static(path.join(__dirname, 'client')));
@@ -34,6 +35,32 @@ var options = {
     dumpio: false
 } */
 
+var socketServer = new WebSocket.Server({ port: 8001, perMessageDeflate: false });
+socketServer.connectionCount = 0;
+socketServer.on('connection', function(socket, upgradeReq) {
+    socketServer.connectionCount++;
+    console.log(
+        'New WebSocket Connection: ',
+        (upgradeReq || socket.upgradeReq).socket.remoteAddress,
+        (upgradeReq || socket.upgradeReq).headers['user-agent'],
+        '(' + socketServer.connectionCount + ' total)'
+    );
+    socket.on('close', function(code, message) {
+        socketServer.connectionCount--;
+        console.log(
+            'Disconnected WebSocket (' + socketServer.connectionCount + ' total)'
+        );
+    });
+});
+
+socketServer.broadcast = function(data) {
+    socketServer.clients.forEach(function each(client) {
+        if (client.readyState === WebSocket.OPEN) {
+            client.send(data);
+        }
+    });
+};
+
 var options = {
     headless: false,
     args: [
@@ -46,6 +73,7 @@ var options = {
         `--window-size=1280,800`,
         '--no-sandbox'
     ],
+    //executablePath: '/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome'
 }
 
 io.on('connection', function(socket) {
@@ -58,7 +86,7 @@ io.on('connection', function(socket) {
     let frameNum = 0;
 
     (async() => {
-        //xvfb.startSync();
+        xvfb.startSync();
         const browser = await puppeteer.launch(options);
         const page = await browser.newPage();
         const mouse = page.mouse;
@@ -102,6 +130,7 @@ io.on('connection', function(socket) {
             //console.log(msg.text());
             if (msg.text().includes('chunk')) {
                 console.log('received chunk');
+                socketServer.broadcast(str2ab(JSON.parse(msg.text()).chunk));
                 socket.emit('news', { data: JSON.parse(msg.text()).chunk });
                 //chunks.push(JSON.parse(msg.text()).chunk);
             }
@@ -145,6 +174,21 @@ io.on('connection', function(socket) {
             }
         });
 
+        socket.on('disconnect', async function() {
+            console.log(`${socket.id} disconnected`);
+            await browser.close();
+            xvfb.stopSync();
+        });
+
     })();
 
 });
+
+function str2ab(str) {
+    var buf = new ArrayBuffer(str.length * 2); // 2 bytes for each char
+    var bufView = new Uint8Array(buf);
+    for (var i = 0, strLen = str.length; i < strLen; i++) {
+        bufView[i] = str.charCodeAt(i);
+    }
+    return buf;
+}
