@@ -1,27 +1,38 @@
 const express = require('express');
+const { Nuxt, Builder } = require('nuxt-edge');
+const puppeteer = require('puppeteer');
 const app = express();
-const path = require('path');
-
+const port = process.env.PORT || 3000;
 const server = require('http').Server(app);
 const io = require('socket.io')(server);
 
-const fs = require('fs');
-const WebSocket = require('ws');
+// Nuxt
+let nuxtConfig = require('./nuxt.config');
+nuxtConfig.dev = !(process.env.NODE_ENV === 'production')
+const nuxt = new Nuxt(nuxtConfig);
 
-const Xvfb = require('xvfb');
-var xvfb = new Xvfb();
+if (nuxtConfig.dev) {
+    const builder = new Builder(nuxt);
+    builder.build();
+}
 
-const puppeteer = require('puppeteer');
+app.use(nuxt.render);
 
-server.listen(8000, { perMessageDeflate: false });
-console.log('Listening on port 8000');
 
+//const Xvfb = require('xvfb');
+//var xvfb = new Xvfb();
+
+
+server.listen(port, { perMessageDeflate: false });
+console.log(`Listening on port ${port}`);
+
+/**
 app.use(express.static(path.join(__dirname, 'client')));
 app.get('/', function(req, res) {
     res.sendFile(__dirname + '/client/index.html');
 });
+ */
 
-/**
 var options = {
     headless: true,
     args: [
@@ -33,34 +44,9 @@ var options = {
     ],
     ignoreHTTPSErrors: true,
     dumpio: false
-} */
+}
 
-var socketServer = new WebSocket.Server({ port: 8001, perMessageDeflate: false });
-socketServer.connectionCount = 0;
-socketServer.on('connection', function(socket, upgradeReq) {
-    socketServer.connectionCount++;
-    console.log(
-        'New WebSocket Connection: ',
-        (upgradeReq || socket.upgradeReq).socket.remoteAddress,
-        (upgradeReq || socket.upgradeReq).headers['user-agent'],
-        '(' + socketServer.connectionCount + ' total)'
-    );
-    socket.on('close', function(code, message) {
-        socketServer.connectionCount--;
-        console.log(
-            'Disconnected WebSocket (' + socketServer.connectionCount + ' total)'
-        );
-    });
-});
-
-socketServer.broadcast = function(data) {
-    socketServer.clients.forEach(function each(client) {
-        if (client.readyState === WebSocket.OPEN) {
-            client.send(data);
-        }
-    });
-};
-
+/**
 var options = {
     headless: false,
     args: [
@@ -75,6 +61,7 @@ var options = {
     ],
     //executablePath: '/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome'
 }
+ */
 
 io.on('connection', function(socket) {
 
@@ -86,7 +73,7 @@ io.on('connection', function(socket) {
     let frameNum = 0;
 
     (async() => {
-        xvfb.startSync();
+        //xvfb.startSync();
         const browser = await puppeteer.launch(options);
         const page = await browser.newPage();
         const mouse = page.mouse;
@@ -96,7 +83,7 @@ io.on('connection', function(socket) {
 
         socket.on('windowSize', async function(data) {
             console.log(data);
-            await page.setViewport({ width: data.w, height: data.h });
+            //await page.setViewport({ width: data.w, height: data.h });
             console.log(`changing viewPort ${data}`);
         });
 
@@ -115,17 +102,6 @@ io.on('connection', function(socket) {
         });
 
         /**
-        setInterval(async function() {
-            let frame = await page.screenshot({
-                path: `frame${String(frameNum).padStart(5, '0')}.jpg`,
-                type: 'jpeg',
-                quality: 20
-            });
-
-            socket.emit('news', { data: frame });
-
-            */
-
         page.on('console', msg => {
             //console.log(msg.text());
             if (msg.text().includes('chunk')) {
@@ -136,17 +112,31 @@ io.on('connection', function(socket) {
             }
             //console.log(msg.text());
         });
-
-
-        //}, 1000 / 30);
-
         setInterval(async function() {
             await page.bringToFront();
         }, 1000);
+ */
+        setInterval(async function() {
+            let frame = null;
+            try {
+                frame = await page.screenshot({
+                    path: `frame${String(frameNum).padStart(5, '0')}.jpg`,
+                    type: 'jpeg',
+                    quality: 20
+                });
+            } catch (e) {
+
+            }
+
+            socket.emit('data', { data: frame });
+
+        }, 1000 / 30);
+
+
 
         socket.on('click', async function(data) {
-            await mouse.click(Math.round(data.x / 2), Math.round(data.y / 2), { delay: 200 });
-            console.log(`mouse click at ${data}`);
+            await mouse.click(Math.round(data.x), Math.round(data.y), { delay: 200 });
+            console.log(`mouse click at ${data.x}|${data.y}`);
         });
 
         socket.on('keypress', async function(data) {
@@ -177,7 +167,7 @@ io.on('connection', function(socket) {
         socket.on('disconnect', async function() {
             console.log(`${socket.id} disconnected`);
             await browser.close();
-            xvfb.stopSync();
+            //xvfb.stopSync();
         });
 
     })();

@@ -26,6 +26,12 @@ cd CloudBrowser
 npm install
 ```
 
+### Start
+
+```
+npm run dev
+```
+
 ### Limitations
 
 Current Limitations:

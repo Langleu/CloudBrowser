@@ -4,15 +4,23 @@
     "description": "",
     "main": "server.js",
     "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "dev": "nodemon -w server.js -w nuxt.config.js server.js",
+        "build": "nuxt build",
+        "start": "nuxt build && NODE_ENV=production node server.js"
     },
     "author": "Langleu",
     "license": "ISC",
     "dependencies": {
         "express": "^4.16.4",
-        "puppeteer": "^1.10.0",
-        "socket.io": "^2.1.1",
-        "ws": "^6.1.2",
+        "nuxt-edge": "^2.4.0-25730581.e2ab1b4",
+        "puppeteer": "^1.11.0",
+        "socket.io": "^2.2.0",
+        "socket.io-client": "^2.2.0",
         "xvfb": "0.2.3"
+    },
+    "devDependencies": {
+        "node-sass": "^4.10.0",
+        "sass-loader": "^7.1.0",
+        "nodemon": "^1.18.7"
     }
 }
