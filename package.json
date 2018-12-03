@@ -14,13 +14,17 @@
         "express": "^4.16.4",
         "nuxt-edge": "^2.4.0-25730581.e2ab1b4",
         "puppeteer": "^1.11.0",
+        "semantic-ui-css": "^2.4.1",
+        "semantic-ui-vue": "^0.7.0",
         "socket.io": "^2.2.0",
         "socket.io-client": "^2.2.0",
         "xvfb": "0.2.3"
     },
     "devDependencies": {
+        "eslint": "^5.9.0",
+        "eslint-config-google": "^0.11.0",
         "node-sass": "^4.10.0",
-        "sass-loader": "^7.1.0",
-        "nodemon": "^1.18.7"
+        "nodemon": "^1.18.7",
+        "sass-loader": "^7.1.0"
     }
 }

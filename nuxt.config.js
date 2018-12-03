@@ -21,6 +21,9 @@ module.exports = {
      ** Global CSS
      */
     srcDir: 'client/',
+    modules: [
+        'semantic-ui-vue/nuxt'
+    ],
     css: [
         // SCSS file in the project
         '~/assets/css/main.scss'

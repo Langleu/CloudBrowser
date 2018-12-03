@@ -1,5 +1,24 @@
 <template>
   <div>
+    <sui-menu pointing>
+      <a
+        is="sui-menu-item"
+        v-for="item in items"
+        :active="isActive(item)"
+        :key="item"
+        :content="item"
+        @click="select(item)"
+      />
+      <sui-menu-menu position="right">
+        <sui-menu-item>
+          <sui-input transparent icon="search" placeholder="Search..." />
+        </sui-menu-item>
+      </sui-menu-menu>
+    </sui-menu>
+
+    <sui-segment>
+      <docs-wireframe name="paragraph" />
+    </sui-segment>
     <h1>Welcome!</h1>
     <nuxt-link to="/about">About page</nuxt-link>
     <img id="photo" style="position: fixed;left:0px;top:60px" />
