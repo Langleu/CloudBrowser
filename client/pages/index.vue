@@ -1,27 +1,26 @@
 <template>
   <div>
-    <sui-menu pointing>
-      <a
-        is="sui-menu-item"
-        v-for="item in items"
-        :active="isActive(item)"
-        :key="item"
-        :content="item"
-        @click="select(item)"
-      />
-      <sui-menu-menu position="right">
-        <sui-menu-item>
-          <sui-input transparent icon="search" placeholder="Search..." />
+    <sui-menu borderless>
+      <sui-menu-menu position="left">
+        <sui-menu-item style="width: 500px">
+          <sui-input 
+          transparent 
+          icon="search" 
+          :value="uri"
+          @focus="focused = true" 
+          @blur="focused = false"
+          @click="focused = true" 
+          @keyup.enter.native="submitUrl" />
         </sui-menu-item>
       </sui-menu-menu>
     </sui-menu>
 
-    <sui-segment>
-      <docs-wireframe name="paragraph" />
+    <sui-segment color="teal" inverted>
+    <img id="photo" />
     </sui-segment>
-    <h1>Welcome!</h1>
-    <nuxt-link to="/about">About page</nuxt-link>
-    <img id="photo" style="position: fixed;left:0px;top:60px" />
+
+    <!--<h1>Welcome!</h1>
+    <nuxt-link to="/about">About page</nuxt-link> -->
   </div>
 </template>
 
@@ -29,8 +28,37 @@
 import socket from '~/plugins/socket.io.js';
 
 export default {
+    data() {
+        return {
+            uri: 'https://google.de',
+            focused: true,
+            fps: 0,
+            tempFps: 0
+        }
+    },
   beforeMount() {
-    socket.on('data', (data) => {
+    let OSName="Unknown OS";
+    if (navigator.appVersion.indexOf("Win")!=-1) OSName="Windows";
+    if (navigator.appVersion.indexOf("Mac")!=-1) OSName="MacOS";
+    if (navigator.appVersion.indexOf("X11")!=-1) OSName="UNIX";
+    if (navigator.appVersion.indexOf("Linux")!=-1) OSName="Linux";
+
+    socket.on('requestScreen', function(data) {
+        console.log(data);
+        console.log(window.innerHeight);
+        console.log(window.innerWidth);
+        console.log(OSName);
+        socket.emit('windowSize', {
+            h: window.innerHeight,
+            w: window.innerWidth,
+            os: OSName
+        });
+    });
+  },
+  mounted() {
+
+      socket.on('data', (data) => {
+          this.tempFps++;
       let arrayBufferView = new Uint8Array(data.data);
         let blob = new Blob([arrayBufferView], {
             type: "image/jpeg"
@@ -40,32 +68,30 @@ export default {
         let img = document.querySelector("#photo");
         img.src = imageUrl;
     });
-    socket.on('requestScreen', function(data) {
-        console.log(data);
-        console.log(window.innerHeight);
-        console.log(window.innerWidth);
-        socket.emit('windowSize', {
-            h: window.innerHeight,
-            w: window.innerWidth
-        });
+
+
+    setInterval(() => {
+        this.fps = this.tempFps;
+        console.log(this.fps);
+        this.tempFps = 0;
+    }, 1000);
+
+    socket.on('urlChange', (data) => {
+        this.uri = data.url;
     });
-  },
-  mounted() {
-    
-    function printMousePos(event) {
-        if (!uiElementFocused)
-            socket.emit('click', {
+        
+    let img = document.querySelector("#photo");
+
+    img.addEventListener("click", (e) => {
+        socket.emit('click', {
                 x: event.clientX,
                 y: event.clientY - 60
             });
-    }
-    
-    let img = document.querySelector("#photo");
+    });
 
-    img.addEventListener("click", printMousePos);
 
-    $(document).keyup(function(e) {
-        if (!uiElementFocused)
+    window.addEventListener('keyup', (e) => {
+        if (!this.focused)
             socket.emit('keypress', e.key);
     });
 
@@ -73,32 +99,42 @@ export default {
     $(window).bind('mousewheel', function(event) {
         if (event.originalEvent.wheelDelta >= 0) {
             console.log('Scroll up');
-            if (!uiElementFocused)
+            if (!focused)
                 socket.emit('scroll', "up");
         } else {
-            if (!uiElementFocused)
+            if (!focused)
                 socket.emit('scroll', "down");
             console.log('Scroll down');
         }
     });
 
-    let uiElementFocused = false;
+    let doit;
+    const emitWindowSize = () => {
+        socket.emit('changeWindowSize', {
+            h: window.innerHeight,
+            w: window.innerWidth
+        });
+     };
 
-    $('#uri-text').focus((e) => {
-        console.log('focus');
-        uiElementFocused = true;
-    });
+    window.onresize = function() {
+    clearTimeout(doit);
+    doit = setTimeout(function() {
+        emitWindowSize();
+    }, 100);
+};
 
-    $('#uri-text').focusout((e) => {
-        console.log('no focus');
-        uiElementFocused = false;
-    });
 
     $("#uri").submit(function(event) {
         socket.emit('uri', $('#uri-text').val());
         event.preventDefault();
     });
   },
+  methods: {
+      submitUrl(evt) {
+          console.log(evt.target.value)
+          socket.emit('uri', evt.target.value);
+      }
+  }
 }
 
 </script>

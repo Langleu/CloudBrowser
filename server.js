@@ -5,6 +5,45 @@ const app = express();
 const port = process.env.PORT || 3000;
 const server = require('http').Server(app);
 const io = require('socket.io')(server);
+const winston = require('winston');
+
+// Winston
+const config = {
+    levels: {
+        error: 0,
+        debug: 1,
+        warn: 2,
+        data: 3,
+        info: 4,
+        verbose: 5,
+        silly: 6,
+        custom: 7
+    },
+    colors: {
+        error: 'red',
+        debug: 'blue',
+        warn: 'yellow',
+        data: 'grey',
+        info: 'green',
+        verbose: 'cyan',
+        silly: 'magenta',
+        custom: 'yellow'
+    }
+};
+
+winston.addColors(config.colors);
+
+const logger = module.exports = winston.createLogger({
+    levels: config.levels,
+    format: winston.format.combine(
+        winston.format.colorize(),
+        winston.format.simple()
+    ),
+    transports: [
+        new winston.transports.Console()
+    ],
+    level: 'custom'
+});
 
 // Nuxt
 let nuxtConfig = require('./nuxt.config');
@@ -24,7 +63,7 @@ app.use(nuxt.render);
 
 
 server.listen(port, { perMessageDeflate: false });
-console.log(`Listening on port ${port}`);
+logger.info(`Listening on port ${port}`);
 
 /**
 app.use(express.static(path.join(__dirname, 'client')));
@@ -33,7 +72,7 @@ app.get('/', function(req, res) {
 });
  */
 
-var options = {
+let options = {
     headless: true,
     args: [
         '--disable-infobars',
@@ -66,7 +105,7 @@ var options = {
 io.on('connection', function(socket) {
 
     socket.id = Math.random();
-    console.log(`${socket.id} connected`);
+    logger.info(`${socket.id} connected`);
 
     socket.emit('requestScreen', true);
 
@@ -74,6 +113,17 @@ io.on('connection', function(socket) {
 
     (async() => {
         //xvfb.startSync();
+        let width = 1280;
+        let height = 800;
+
+        socket.on('windowSize', async(data) => {
+            logger.info(data);
+            //await page.setViewport({ width: data.w, height: data.h });
+            width = data.w;
+            height = data.h;
+            logger.info(`changing viewPort ${data}`);
+        });
+
         const browser = await puppeteer.launch(options);
         const page = await browser.newPage();
         const mouse = page.mouse;
@@ -81,22 +131,16 @@ io.on('connection', function(socket) {
 
         //await page.goto('https://cookie.riimu.net/speed/');
 
-        socket.on('windowSize', async function(data) {
-            console.log(data);
-            //await page.setViewport({ width: data.w, height: data.h });
-            console.log(`changing viewPort ${data}`);
-        });
-
         //await page.goto('https://codepen.io/riskers/full/xpqPee/');
         await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36');
 
-        await page._client.send('Emulation.clearDeviceMetricsOverride');
-        await page.goto('https://google.com/', { waitUntil: 'networkidle2' });
+        //await page._client.send('Emulation.clearDeviceMetricsOverride');
+        await page.goto('https://google.com/', { waitUntil: 'domcontentloaded' });
         await page.setBypassCSP(true);
 
         await page.setViewport({
-            width: 1280,
-            height: 800,
+            width: width,
+            height: height,
             hasTouch: false,
             isLandscape: false
         });
@@ -116,13 +160,13 @@ io.on('connection', function(socket) {
             await page.bringToFront();
         }, 1000);
  */
-        setInterval(async function() {
+
+        setInterval(async() => {
             let frame = null;
             try {
                 frame = await page.screenshot({
-                    path: `frame${String(frameNum).padStart(5, '0')}.jpg`,
                     type: 'jpeg',
-                    quality: 20
+                    quality: 80
                 });
             } catch (e) {
 
@@ -132,40 +176,55 @@ io.on('connection', function(socket) {
 
         }, 1000 / 30);
 
+        page.on('domcontentloaded', async() => {
+            let url = await page.evaluate(_ => {
+                return window.location.href;
+            });
+            socket.emit('urlChange', { url });
+        });
 
+        socket.on('changeWindowSize', async(data) => {
+            logger.info(data);
+            await page.setViewport({
+                width: data.w,
+                height: data.h,
+                hasTouch: false,
+                isLandscape: false
+            });
+        });
 
         socket.on('click', async function(data) {
             await mouse.click(Math.round(data.x), Math.round(data.y), { delay: 200 });
-            console.log(`mouse click at ${data.x}|${data.y}`);
+            logger.info(`mouse click at ${data.x}|${data.y}`);
         });
 
         socket.on('keypress', async function(data) {
             await keyboard.press(data);
-            console.log(`key ${data} pressed`);
+            logger.info(`key ${data} pressed`);
         });
 
         socket.on('scroll', async function(data) {
             if (data == 'down')
                 await page.evaluate(_ => {
-                    window.scrollBy(0, 10);
+                    window.scrollBy(0, 25);
                 });
             else
                 await page.evaluate(_ => {
-                    window.scrollBy(0, -10);
+                    window.scrollBy(0, -25);
                 });
         });
 
         socket.on('uri', async function(data) {
-            console.log(`Redirecting to ${data}`);
+            logger.info(`Redirecting to ${data}`);
             try {
-                await page.goto(data);
+                await page.goto(data, { waitUntil: 'domcontentloaded' });
             } catch (e) {
-                console.error(e);
+                logger.error(e);
             }
         });
 
         socket.on('disconnect', async function() {
-            console.log(`${socket.id} disconnected`);
+            logger.info(`${socket.id} disconnected`);
             await browser.close();
             //xvfb.stopSync();
         });
