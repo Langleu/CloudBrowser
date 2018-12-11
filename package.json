@@ -11,6 +11,7 @@
     "author": "Langleu",
     "license": "ISC",
     "dependencies": {
+        "core-js": "^2.6.0",
         "express": "^4.16.4",
         "nuxt-edge": "^2.4.0-25730581.e2ab1b4",
         "puppeteer": "^1.11.0",

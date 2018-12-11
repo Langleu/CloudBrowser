@@ -13,3 +13,4 @@ env.*
 *.csv
 /tmp/*
 node_modules
+.idea

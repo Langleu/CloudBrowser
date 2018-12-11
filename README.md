@@ -31,20 +31,28 @@ npm install
 ```
 npm run dev
 ```
+or
+````
+docker-compuse up
+````
 
 ### Limitations
 
 Current Limitations:
 
-Macs are currently limited to 6 fps, ubuntu should be able to achieve up to 25 fps.
+Running it on MacOS as server is currently limited to 6 fps same for Windows.
+Linux has reached 20 fps in current tests.
 
 Solution: Switch over to MediaRecorder API
 
 ## ToDos
 
 - [ ] switch to MediaRecorder API with Xvfb
-- [ ] use SSR with React/Vue or Templating Engine
+- [x] use SSR with React/Vue or Templating Engine
 - [ ] clean up code
-- [ ] use css framework
-- [ ] switch to winston
+- [x] use css framework
+- [x] switch to winston
+- [ ] pseudo accounts
+    - [ ] sessions
+- [ ] adjust puppeteer for better performance
 - [ ] ...
