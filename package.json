@@ -4,16 +4,16 @@
     "description": "",
     "main": "server.js",
     "scripts": {
-        "dev": "nodemon -w server.js -w nuxt.config.js server.js",
+        "dev": "nodemon --exec babel-node -w server.js -w nuxt.config.js server.js ",
         "build": "nuxt build",
-        "start": "nuxt build && NODE_ENV=production node server.js"
+        "start": "nuxt build && NODE_ENV=production node server.js",
+        "generate-docs": "node_modules/.bin/jsdoc -c jsdoc.json"
     },
     "author": "Langleu",
     "license": "ISC",
     "dependencies": {
-        "core-js": "^2.6.0",
         "express": "^4.16.4",
-        "nuxt-edge": "^2.4.0-25730581.e2ab1b4",
+        "nuxt-edge": "^2.4.0-25807688.351f5c7b",
         "puppeteer": "^1.11.0",
         "semantic-ui-css": "^2.4.1",
         "semantic-ui-vue": "^0.7.0",
@@ -23,10 +23,20 @@
         "xvfb": "0.2.3"
     },
     "devDependencies": {
-        "eslint": "^5.9.0",
+        "@babel/core": "^7.2.2",
+        "@babel/node": "^7.2.2",
+        "@babel/plugin-proposal-class-properties": "^7.3.0",
+        "@babel/preset-env": "^7.3.1",
+        "babel-eslint": "^10.0.1",
+        "docdash": "^1.0.2",
+        "eslint": "^5.12.1",
+        "eslint-config-airbnb": "^17.1.0",
         "eslint-config-google": "^0.11.0",
-        "node-sass": "^4.10.0",
-        "nodemon": "^1.18.7",
+        "eslint-plugin-babel": "^5.3.0",
+        "faster.js": "^1.1.0",
+        "jsdoc": "^3.5.5",
+        "node-sass": "^4.11.0",
+        "nodemon": "^1.18.9",
         "sass-loader": "^7.1.0"
     }
 }
