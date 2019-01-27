@@ -13,16 +13,24 @@
     "author": "Langleu",
     "license": "ISC",
     "dependencies": {
+        "bcrypt": "^3.0.3",
+        "cookieparser": "^0.1.0",
         "express": "^4.16.4",
+        "js-cookie": "^2.2.0",
+        "jsonwebtoken": "^8.4.0",
+        "mini-toastr": "^0.8.1",
+        "mongoose": "^5.4.7",
+        "noty": "^3.2.0-beta",
         "nuxt-edge": "^2.4.0-25807688.351f5c7b",
         "puppeteer": "^1.11.0",
         "semantic-ui-css": "^2.4.1",
         "semantic-ui-vue": "^0.7.0",
         "socket.io": "^2.2.0",
         "socket.io-client": "^2.2.0",
+        "vue-notifications": "^0.9.0",
         "vue-socket.io-extended": "^3.2.1",
-        "winston": "^3.1.0",
-        "xvfb": "0.2.3"
+        "vue-toasted": "^1.1.26",
+        "winston": "^3.1.0"
     },
     "devDependencies": {
         "@babel/core": "^7.2.2",

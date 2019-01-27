@@ -49,7 +49,7 @@ Stick to screenshots as requested from our supervisor.
 ## ToDos
 
 - [x] use SSR with React/Vue or Templating Engine
-- [ ] clean up code
+- [x] clean up code
 - [x] use css framework
 - [x] switch to winston
 - [ ] pseudo accounts

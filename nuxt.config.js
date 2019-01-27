@@ -21,6 +21,9 @@ module.exports = {
     {
       src: '~/plugins/socket.io.js',
       ssr: false
+    },
+    {
+      src: '~/plugins/vue-notifications.js'
     }
   ],
   srcDir: 'client/',
@@ -29,7 +32,7 @@ module.exports = {
   ],
   css: [
     // SCSS file in the project
-    '~/assets/css/main.scss',
+    '~/assets/css/main.scss'
   ],
   env: {
     WS_URL: process.env.WS_URL || 'http://localhost:3000',

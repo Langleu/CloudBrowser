@@ -46,6 +46,7 @@
 
 <script>
     export default {
+        middleware: 'authenticated',
         sockets: {
             requestScreen(data) {
                 let OSName = 'Unknown OS';

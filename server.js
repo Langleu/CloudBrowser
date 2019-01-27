@@ -1,11 +1,13 @@
 const express = require('express');
+const mongoose = require('mongoose');
 const {Nuxt, Builder} = require('nuxt-edge');
 const app = express();
 const port = process.env.PORT || 3000;
 const server = require('http').Server(app);
 const io = require('socket.io')(server);
-const HeadlessBrowser = require('./server/headlessBrowser/HeadlessBrowser');
-const logger = require('./server/logger');
+const logger = require('./server/Logger');
+const CommunicationLayer = require('./server/CommunicationLayer');
+const UserService = require('./server/services/UserService');
 
 /** Nuxt */
 let nuxtConfig = require('./nuxt.config');
@@ -13,9 +15,11 @@ nuxtConfig.dev = !(process.env.NODE_ENV === 'production');
 const nuxt = new Nuxt(nuxtConfig);
 
 if (nuxtConfig.dev) {
-  const builder = new Builder(nuxt);
-  builder.build();
+    const builder = new Builder(nuxt);
+    builder.build();
 }
+
+mongoose.connect(process.env.DB_URL || 'mongodb://localhost:27017/cloud_browser');
 
 app.use(nuxt.render);
 
@@ -23,68 +27,41 @@ server.listen(port, {perMessageDeflate: false});
 logger.info(`Listening on port ${port}`);
 
 /** Socket Connection */
-io.on('connection', function(socket) {
+io.on('connection', (socket) => {
 
-  socket.id = Math.random().toString().substr(2, 16);
-  logger.info(`${socket.id} connected`);
+    socket.id = Math.random().toString().substr(2, 16);
+    logger.info(`${socket.id} connected`);
 
-  let browser = null;
-
-  socket.on('hallo', (data) => {
-    socket.emit('hallo', `${data} back!`);
-  });
-
-  (async () => {
-    socket.on('initBrowser', async (data) => {
-      logger.info(`${data} client opened session`);
-      browser = new HeadlessBrowser('Puppeteer', socket);
-      await browser.connect();
-      socket.emit('requestScreen', true);
-
-      setInterval(async () => {
-        let frame = await browser.requestScreenshot();
-
-        socket.emit('data', {data: frame});
-
-      }, 1000 / 30);
+    socket.on('checkJwt', (token) => {
+        if (UserService.verifyJwt(token))
+            socket.emit('jwt', token);
     });
 
-    socket.on('windowSize', async (data) => {
-      await browser.setWindowSize(data);
+    socket.on('createUser', (data) => {
+        if (data.register) {
+            UserService.create(data)
+                .then(user => {
+                    socket.emit('userCreated', {msg: `${data.email} was successfully created!`, type: 'success'});
+                })
+                .catch(err => {
+                    socket.emit('userCreated', {msg: `${data.email} could not be created!`, type: 'error'});
+                });
+        } else {
+            UserService.authenticate(data.email, data.password)
+                .then(data => {
+                    if (data.isMatch) {
+                        let token = UserService.createJwt(data.user);
+                        socket.emit('jwt', token);
+                        socket.emit('userCreated', {msg: 'Successfully logged in!', type: 'success'});
+                    } else
+                        socket.emit('userCreated', {msg: 'Could not login!', type: 'error'});
+                });
+        }
     });
 
-    socket.on('changeWindowSize', async (data) => {
-      await browser.changeViewport(data);
-    });
+    const communication = new CommunicationLayer(socket);
 
-    socket.on('click', async (data) => {
-      await browser.mouseClick(data);
-      //logger.info(`mouse click at ${data.x * scale}|${data.y * scale}`);
-    });
+    //TODO handle authentication and then start Listener
 
-    socket.on('keypress', async (data) => {
-      await browser.keypress(data);
-      logger.info(`key ${data} pressed`);
-    });
-
-    socket.on('scroll', async (data) => {
-      await browser.scrollPage(data);
-    });
-
-    socket.on('uri', async (data) => {
-      logger.info(`Redirecting to ${data}`);
-      await browser.urlChange(data);
-    });
-
-    socket.on('navigation', async (data) => {
-      await browser.navigation(data);
-    });
-
-    socket.on('disconnect', async () => {
-      logger.info(`${socket.id} disconnected`);
-      await browser.disconnect();
-    });
-
-  })();
-
+    communication.startListener();
 });
