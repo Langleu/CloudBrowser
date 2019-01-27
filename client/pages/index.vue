@@ -41,7 +41,7 @@
             jwt(token) {
                 this.$store.commit('setJwt', token);
                 Cookie.set('jwt', token);
-                this.$router.push('/about');
+                this.$router.push('/cloud-browser');
             }
         },
         beforeMount() {

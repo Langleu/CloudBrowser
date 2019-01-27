@@ -30,6 +30,13 @@
                 >
                     <sui-dropdown-menu>
                         <sui-dropdown-item>FPS</sui-dropdown-item>
+                        <sui-dropdown-item>
+                            <sui-button id="bwhite" animated @click="logout">
+                            <sui-button-content visible>Logout</sui-button-content>
+                            <sui-button-content hidden>
+                                <sui-icon name="right arrow" />
+                            </sui-button-content>
+                        </sui-button></sui-dropdown-item>
                     </sui-dropdown-menu>
                 </sui-dropdown>
             </sui-menu-menu>
@@ -45,6 +52,8 @@
 </template>
 
 <script>
+    const Cookie = process.client ? require('js-cookie') : undefined;
+
     export default {
         middleware: 'authenticated',
         sockets: {
@@ -157,6 +166,12 @@
             navigate(evt, argument) {
                 this.$socket.emit('navigation', argument);
             },
+            logout() {
+                this.$socket.emit('disconnectBrowser', 'disconnected');
+                Cookie.remove('jwt');
+                this.$store.commit('setJwt', null);
+                this.$router.push('/');
+            }
         },
     };
 

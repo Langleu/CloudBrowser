@@ -6,6 +6,8 @@ class CommunicationLayer {
         this.socket = socket;
 
         this.browser = null;
+        this.screenshotId = null;
+        this.fpsId = null;
     }
 
     startListener = async () => {
@@ -21,14 +23,14 @@ class CommunicationLayer {
 
             let i = 0;
 
-            setInterval(async () => {
+            this.screenshotId = setInterval(async () => {
                 let frame = await this.browser.requestScreenshot();
                 i++;
                 this.socket.emit('data', {data: frame});
 
             }, 1000 / 30);
 
-            setInterval(() => {
+            this.fpsId = setInterval(() => {
                 logger.info(`Current fps is ${i}`);
                 i = 0;
             }, 1000);
@@ -65,9 +67,21 @@ class CommunicationLayer {
             await this.browser.navigation(data);
         });
 
+        this.socket.on('disconnectBrowser', async () => {
+            clearInterval(this.screenshotId);
+            clearInterval(this.fpsId);
+            await this.browser.disconnect();
+        });
+
         this.socket.on('disconnect', async () => {
             logger.info(`${this.socket.id} disconnected`);
-            await this.browser.disconnect();
+            try {
+                await this.browser.disconnect();
+                clearInterval(this.screenshotId);
+                clearInterval(this.fpsId);
+            } catch (e) {
+                //
+            }
         });
     }
 
