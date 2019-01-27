@@ -6,8 +6,9 @@
     "scripts": {
         "dev": "nodemon --exec babel-node -w server.js -w nuxt.config.js server.js ",
         "build": "nuxt build",
-        "start": "nuxt build && NODE_ENV=production node server.js",
-        "generate-docs": "node_modules/.bin/jsdoc -c jsdoc.json"
+        "start": "nuxt build && NODE_ENV=production babel-node server.js",
+        "generate-docs": "node_modules/.bin/jsdoc -c jsdoc.json",
+        "test": "ava --serial --verbose"
     },
     "author": "Langleu",
     "license": "ISC",
@@ -27,6 +28,7 @@
         "@babel/core": "^7.2.2",
         "@babel/node": "^7.2.2",
         "@babel/plugin-proposal-class-properties": "^7.3.0",
+        "@babel/polyfill": "^7.2.5",
         "@babel/preset-env": "^7.3.1",
         "ava": "^1.1.0",
         "babel-eslint": "^10.0.1",
@@ -41,5 +43,21 @@
         "node-sass": "^4.11.0",
         "nodemon": "^1.18.9",
         "sass-loader": "^7.1.0"
+    },
+    "ava": {
+        "require": [
+            "@babel/polyfill"
+        ],
+        "babel": {
+            "testOptions": {
+                "plugins": [
+                    "@babel/plugin-proposal-class-properties",
+                    "module:faster.js"
+                ],
+                "presets": [
+                    "@babel/preset-env"
+                ]
+            }
+        }
     }
 }
