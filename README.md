@@ -5,6 +5,7 @@ Cloud Browser which takes over the processing of webpages for older devices.
 Made for the project AWT at TU-Berlin and Fraunhofer FOKUS.
 
 ## Getting Started
+Documentation can be found [here](https://langleu.github.io/CloudBrowser/).
 
 ### Prerequisites
 
@@ -43,11 +44,10 @@ Current Limitations:
 Running it on MacOS as server is currently limited to 6 fps same for Windows.
 Linux has reached 20 fps in current tests.
 
-Solution: Switch over to MediaRecorder API
+Stick to screenshots as requested from our supervisor.
 
 ## ToDos
 
-- [ ] switch to MediaRecorder API with Xvfb
 - [x] use SSR with React/Vue or Templating Engine
 - [ ] clean up code
 - [x] use css framework

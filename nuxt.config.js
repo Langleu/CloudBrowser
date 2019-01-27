@@ -17,6 +17,12 @@ module.exports = {
       type: 'text/javascript',
     }],
   },
+  plugins: [
+    {
+      src: '~/plugins/socket.io.js',
+      ssr: false
+    }
+  ],
   srcDir: 'client/',
   modules: [
     'semantic-ui-vue/nuxt',

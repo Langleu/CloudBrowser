@@ -4,46 +4,8 @@ const app = express();
 const port = process.env.PORT || 3000;
 const server = require('http').Server(app);
 const io = require('socket.io')(server);
-const winston = require('winston');
 const HeadlessBrowser = require('./server/headlessBrowser/HeadlessBrowser');
-
-/** Winston  */
-const config = {
-  levels: {
-    error: 0,
-    debug: 1,
-    warn: 2,
-    data: 3,
-    info: 4,
-    verbose: 5,
-    silly: 6,
-    custom: 7,
-  },
-  colors: {
-    error: 'red',
-    debug: 'blue',
-    warn: 'yellow',
-    data: 'grey',
-    info: 'green',
-    verbose: 'cyan',
-    silly: 'magenta',
-    custom: 'yellow',
-  },
-};
-
-winston.addColors(config.colors);
-
-const logger = module.exports = winston.createLogger({
-  levels: config.levels,
-  format: winston.format.combine(
-    winston.format.colorize(),
-    winston.format.simple(),
-  ),
-  transports: [
-    new winston.transports.Console(),
-  ],
-  level: 'custom',
-});
+const logger = require('./server/logger');
 
 /** Nuxt */
 let nuxtConfig = require('./nuxt.config');
@@ -66,24 +28,30 @@ io.on('connection', function(socket) {
   socket.id = Math.random().toString().substr(2, 16);
   logger.info(`${socket.id} connected`);
 
-  const browser = new HeadlessBrowser('Puppeteer', socket);
+  let browser = null;
 
-  socket.emit('requestScreen', true);
+  socket.on('hallo', (data) => {
+    socket.emit('hallo', `${data} back!`);
+  });
 
   (async () => {
+    socket.on('initBrowser', async (data) => {
+      logger.info(`${data} client opened session`);
+      browser = new HeadlessBrowser('Puppeteer', socket);
+      await browser.connect();
+      socket.emit('requestScreen', true);
 
-    await browser.connect();
+      setInterval(async () => {
+        let frame = await browser.requestScreenshot();
+
+        socket.emit('data', {data: frame});
+
+      }, 1000 / 30);
+    });
 
     socket.on('windowSize', async (data) => {
       await browser.setWindowSize(data);
     });
-
-    setInterval(async () => {
-      let frame = await browser.requestScreenshot();
-
-      socket.emit('data', {data: frame});
-
-    }, 1000 / 30);
 
     socket.on('changeWindowSize', async (data) => {
       await browser.changeViewport(data);

@@ -19,6 +19,7 @@
         "semantic-ui-vue": "^0.7.0",
         "socket.io": "^2.2.0",
         "socket.io-client": "^2.2.0",
+        "vue-socket.io-extended": "^3.2.1",
         "winston": "^3.1.0",
         "xvfb": "0.2.3"
     },
@@ -27,6 +28,7 @@
         "@babel/node": "^7.2.2",
         "@babel/plugin-proposal-class-properties": "^7.3.0",
         "@babel/preset-env": "^7.3.1",
+        "ava": "^1.1.0",
         "babel-eslint": "^10.0.1",
         "docdash": "^1.0.2",
         "eslint": "^5.12.1",
@@ -35,6 +37,7 @@
         "eslint-plugin-babel": "^5.3.0",
         "faster.js": "^1.1.0",
         "jsdoc": "^3.5.5",
+        "jsdom": "^13.2.0",
         "node-sass": "^4.11.0",
         "nodemon": "^1.18.9",
         "sass-loader": "^7.1.0"

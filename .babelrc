@@ -2,5 +2,5 @@
   "presets": [
     "@babel/preset-env"
   ],
-  "plugins": [ "@babel/plugin-proposal-class-properties", "faster.js"]
+  "plugins": [ "@babel/plugin-proposal-class-properties", "module:faster.js"]
 }
