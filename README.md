@@ -1,4 +1,4 @@
-# Cloud Browser
+# Cloud Browser <a href="https://ci.langl.eu/job/CloudBrowser/" target="_blank"><img src="https://ci.langl.eu/job/CloudBrowser/job/master/badge/icon"></a>
 
 Cloud Browser which takes over the processing of webpages for older devices.
 
