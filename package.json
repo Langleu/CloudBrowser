@@ -7,7 +7,7 @@
     "dev": "nodemon --exec babel-node -w server.js -w nuxt.config.js server.js ",
     "build": "nuxt build",
     "start": "nuxt build && NODE_ENV=production babel-node server.js",
-    "generate-docs": "node_modules/.bin/jsdoc -c jsdoc.json",
+    "generate-docs": "node_modules/.bin/jsdoc -c jsdoc.json -R README.md",
     "test": "ava --serial --verbose"
   },
   "author": "Langleu",
@@ -49,6 +49,7 @@
     "jsdom": "^13.2.0",
     "node-sass": "^4.11.0",
     "nodemon": "^1.18.9",
+    "resemblejs": "^3.0.1",
     "sass-loader": "^7.1.0"
   },
   "ava": {

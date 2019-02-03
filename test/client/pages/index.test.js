@@ -13,7 +13,7 @@ test.before(async () => {
     nuxt = new Nuxt(nuxtConfig);
     await new Builder(nuxt).build();
     await nuxt.server.listen(4000, 'localhost');
-}, 30000);
+}, 35000);
 
 // Example of testing only generated html
 test('Route / exits and render HTML', async (t) => {
