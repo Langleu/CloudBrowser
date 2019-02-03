@@ -92,7 +92,7 @@
         data() {
             return {
                 uri: 'https://google.de',
-                focused: true,
+                focused: false,
                 fps: 0,
                 tempFps: 0,
             };

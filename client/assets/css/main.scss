@@ -7,3 +7,19 @@
 #bwhite {
     background-color: white
 }
+
+.centerX {
+    max-width: 1000px;
+    margin: auto;
+    left: 1%;
+    right: 1%;
+    top: 1%;
+    position: absolute;
+}
+
+.centerX div {
+    display: block;
+    height: 100%;
+    width: 100%;
+    margin-top: 10px;
+}

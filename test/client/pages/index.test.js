@@ -19,7 +19,7 @@ test.before(async () => {
 test('Route / exits and render HTML', async (t) => {
     const context = {};
     const { html } = await nuxt.server.renderRoute('/', context);
-    t.true(html.includes('<h1>Welcome!</h1>'))
+    t.true(html.includes('<h2>CloudBrowser</h2>'))
 });
 
 // Example of testing via dom checking
@@ -27,9 +27,9 @@ test('Route / exits and render HTML with CSS applied', async (t) => {
     const context = {};
     const { html } = await nuxt.server.renderRoute('/', context);
     const { window } = new JSDOM(html).window;
-    const element = window.document.querySelector('h1');
+    const element = window.document.querySelector('h2');
     t.not(element, null);
-    t.is(element.textContent, 'Welcome!');
+    t.is(element.textContent, 'CloudBrowser');
 });
 
 // Close server and ask nuxt to stop listening to file changes

@@ -28,7 +28,7 @@ module.exports = {
   ],
   srcDir: 'client/',
   modules: [
-    'semantic-ui-vue/nuxt',
+    'semantic-ui-vue/nuxt'
   ],
   css: [
     // SCSS file in the project

@@ -9,7 +9,7 @@ const logger = require('./server/Logger');
 const CommunicationLayer = require('./server/CommunicationLayer');
 const UserService = require('./server/services/UserService');
 
-/** Nuxt */
+/** requires the nuxt config */
 let nuxtConfig = require('./nuxt.config');
 nuxtConfig.dev = !(process.env.NODE_ENV === 'production');
 const nuxt = new Nuxt(nuxtConfig);
@@ -33,8 +33,11 @@ io.on('connection', (socket) => {
     logger.info(`${socket.id} connected`);
 
     socket.on('checkJwt', (token) => {
-        if (UserService.verifyJwt(token))
+        if (UserService.verifyJwt(token)) {
+            let user = UserService.decodeJwt(token);
+            socket.userId = user._id;
             socket.emit('jwt', token);
+        }
     });
 
     socket.on('createUser', (data) => {
@@ -51,6 +54,7 @@ io.on('connection', (socket) => {
                 .then(data => {
                     if (data.isMatch) {
                         let token = UserService.createJwt(data.user);
+                        socket.userId = data.user._id;
                         socket.emit('jwt', token);
                         socket.emit('userCreated', {msg: 'Successfully logged in!', type: 'success'});
                     } else
@@ -60,8 +64,6 @@ io.on('connection', (socket) => {
     });
 
     const communication = new CommunicationLayer(socket);
-
-    //TODO handle authentication and then start Listener
 
     communication.startListener();
 });

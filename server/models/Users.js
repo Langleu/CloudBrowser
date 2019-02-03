@@ -2,13 +2,25 @@ import mongoose, {Schema} from 'mongoose';
 const bcrypt = require('bcrypt');
 const SALT_WORK_FACTOR = 11;
 
+/**
+ * @class
+ * @description describes the user model.
+ * @param email String
+ * @param password ObjectId
+ * @param date Integer
+ */
 export const userSchema = new Schema({
         email: { type: String,  lowercase: true,  trim: true,  index: true,  unique: true,  required: true },
-        password: { type: String, required: true }
+        password: { type: String, required: true },
+        date: { type: Date, default: Date.now }
     },
     {collection: 'users'}
 );
 
+/**
+ * @method
+ * @description hashes and salts the user password before saving in the database.
+ */
 userSchema.pre('save', function(next) {
     let user = this;
 
@@ -30,6 +42,13 @@ userSchema.pre('save', function(next) {
     });
 });
 
+/**
+ * @method
+ * @description allows us to compare a password with the hash entry.
+ * @param candidatePassword
+ * @param cb
+ * @returns {*}
+ */
 userSchema.methods.comparePassword = function(candidatePassword, cb) {
     return bcrypt.compare(candidatePassword, this.password)
         .then(isMatch => {

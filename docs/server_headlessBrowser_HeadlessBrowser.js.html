@@ -3,7 +3,7 @@
 <head>
     
     <meta charset="utf-8">
-    <title>server/headlessBrowser/strategies/GenericStrategy.js - Cloud Browser Documentation</title>
+    <title>server/headlessBrowser/HeadlessBrowser.js - Cloud Browser Documentation</title>
     
     
     
@@ -36,7 +36,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">server/headlessBrowser/strategies/GenericStrategy.js</h1>
+    <h1 class="page-title">server/headlessBrowser/HeadlessBrowser.js</h1>
     
 
     
@@ -46,76 +46,118 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>/**
+            <pre class="prettyprint source linenums"><code>const PuppeteerStrategy = require('./strategies/PuppeteerStrategy');
+
+/**
  * @class
- * Generic Strategy which other Stragies have to follow.
+ * actual Strategy for the headless browser.
+ * For further implementation and explanation, please look at PuppeteerStrategy.
  */
-class GenericStrategy {
-  /**
-   *
-   */
-  constructor() {}
-
+class HeadlessBrowser {
     /**
-     *
+     * @constructor
+     * @param type
+     * @param socket
      */
-  connect = () => {};
+    constructor(type, socket) {
+        switch (type) {
+            case "Puppeteer":
+                this.strategy = new PuppeteerStrategy(socket);
+                break;
+            default:
+                this.strategy = new PuppeteerStrategy(socket);
+        }
+    }
 
     /**
-     *
+     * @async
+     * @returns {Promise&lt;void>}
      */
-  requestScreenshot = () => {};
+    connect = async () => {
+        await this.strategy.connect();
+    };
 
     /**
-     *
+     * @async
+     * @returns {Promise&lt;void>}
+     */
+    requestScreenshot = async () => {
+        return await this.strategy.requestScreenshot();
+    };
+
+    /**
+     * @async
+     * @returns {Promise&lt;void>}
      * @param data
      */
-  changeViewport = (data) => {};
+    changeViewport = async (data) => {
+        await this.strategy.changeViewport(data);
+    };
 
     /**
-     *
+     * @async
+     * @returns {Promise&lt;void>
      * @param data
      */
-  setWindowSize = (data) => {};
+    setWindowSize = async (data) => {
+        await this.strategy.setWindowSize(data);
+    };
 
     /**
-     *
+     * @async
+     * @returns {Promise&lt;void>}
      * @param data
      */
-  mouseClick = (data) => {};
+    mouseClick = async (data) => {
+        await this.strategy.mouseClick(data);
+    };
 
     /**
-     *
+     * @async
+     * @returns {Promise&lt;void>}
      * @param data
      */
-  keypress = (data) => {};
+    keypress = async (data) => {
+        await this.strategy.keypress(data);
+    };
 
     /**
-     *
+     * @async
+     * @returns {Promise&lt;void>}
      * @param data
      */
-  scrollPage = (data) => {};
+    scrollPage = async (data) => {
+        await this.strategy.scrollPage(data);
+    };
 
     /**
-     *
+     * @async
+     * @returns {Promise&lt;void>}
      * @param data
      */
-  urlChange = (data) => {};
+    urlChange = async (data) => {
+        await this.strategy.urlChange(data);
+    };
 
     /**
-     *
+     * @async
+     * @returns {Promise&lt;void>}
      * @param data
      */
-  navigation = (data) => {};
+    navigation = async (data) => {
+        await this.strategy.navigation(data);
+    };
 
     /**
-     *
-     * @param data
+     * @async
+     * @returns {Promise&lt;void>}
      */
-  disconnect = () => {};
+    disconnect = async () => {
+        await this.strategy.disconnect();
+    };
 }
 
-module.exports = GenericStrategy;
+module.exports = HeadlessBrowser;
 </code></pre>
         </article>
     </section>

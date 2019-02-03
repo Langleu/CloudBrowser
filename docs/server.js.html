@@ -31,7 +31,7 @@
     
     <input type="text" id="nav-search" placeholder="Search" />
     
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="GenericStrategy.html">GenericStrategy</a></li></ul><h3>Global</h3><ul><li><a href="global.html#config">config</a></li><li><a href="global.html#nuxtConfig">nuxtConfig</a></li><li><a href="global.html#options">options</a></li><li><a href="global.html#scale">scale</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="CommunicationLayer.html">CommunicationLayer</a></li><li><a href="GenericStrategy.html">GenericStrategy</a></li><li><a href="HeadlessBrowser.html">HeadlessBrowser</a></li><li><a href="historySchema.html">historySchema</a></li><li><a href="HistoryService.html">HistoryService</a></li><li><a href="Logger.html">Logger</a><ul class='methods'><li data-type='method'><a href="Logger.html#init">init</a></li></ul></li><li><a href="PuppeteerStrategy.html">PuppeteerStrategy</a></li><li><a href="userSchema.html">userSchema</a></li><li><a href="UserService.html">UserService</a></li></ul><h3>Global</h3><ul><li><a href="global.html#nuxtConfig">nuxtConfig</a></li><li><a href="global.html#options">options</a></li><li><a href="global.html#scale">scale</a></li></ul>
 </nav>
 
 <div id="main">
@@ -47,61 +47,27 @@
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>const express = require('express');
+const mongoose = require('mongoose');
 const {Nuxt, Builder} = require('nuxt-edge');
 const app = express();
 const port = process.env.PORT || 3000;
 const server = require('http').Server(app);
 const io = require('socket.io')(server);
-const winston = require('winston');
-const HeadlessBrowser = require('./server/headlessBrowser/HeadlessBrowser');
+const logger = require('./server/Logger');
+const CommunicationLayer = require('./server/CommunicationLayer');
+const UserService = require('./server/services/UserService');
 
-/** Winston  */
-const config = {
-  levels: {
-    error: 0,
-    debug: 1,
-    warn: 2,
-    data: 3,
-    info: 4,
-    verbose: 5,
-    silly: 6,
-    custom: 7,
-  },
-  colors: {
-    error: 'red',
-    debug: 'blue',
-    warn: 'yellow',
-    data: 'grey',
-    info: 'green',
-    verbose: 'cyan',
-    silly: 'magenta',
-    custom: 'yellow',
-  },
-};
-
-winston.addColors(config.colors);
-
-const logger = module.exports = winston.createLogger({
-  levels: config.levels,
-  format: winston.format.combine(
-    winston.format.colorize(),
-    winston.format.simple(),
-  ),
-  transports: [
-    new winston.transports.Console(),
-  ],
-  level: 'custom',
-});
-
-/** Nuxt */
+/** requires the nuxt config */
 let nuxtConfig = require('./nuxt.config');
 nuxtConfig.dev = !(process.env.NODE_ENV === 'production');
 const nuxt = new Nuxt(nuxtConfig);
 
 if (nuxtConfig.dev) {
-  const builder = new Builder(nuxt);
-  builder.build();
+    const builder = new Builder(nuxt);
+    builder.build();
 }
+
+mongoose.connect(process.env.DB_URL || 'mongodb://localhost:27017/cloud_browser');
 
 app.use(nuxt.render);
 
@@ -109,64 +75,45 @@ server.listen(port, {perMessageDeflate: false});
 logger.info(`Listening on port ${port}`);
 
 /** Socket Connection */
-io.on('connection', function(socket) {
+io.on('connection', (socket) => {
 
-  socket.id = Math.random().toString().substr(2, 16);
-  logger.info(`${socket.id} connected`);
+    socket.id = Math.random().toString().substr(2, 16);
+    logger.info(`${socket.id} connected`);
 
-  const browser = new HeadlessBrowser('Puppeteer', socket);
-
-  socket.emit('requestScreen', true);
-
-  (async () => {
-
-    await browser.connect();
-
-    socket.on('windowSize', async (data) => {
-      await browser.setWindowSize(data);
+    socket.on('checkJwt', (token) => {
+        if (UserService.verifyJwt(token)) {
+            let user = UserService.decodeJwt(token);
+            socket.userId = user._id;
+            socket.emit('jwt', token);
+        }
     });
 
-    setInterval(async () => {
-      let frame = await browser.requestScreenshot();
-
-      socket.emit('data', {data: frame});
-
-    }, 1000 / 30);
-
-    socket.on('changeWindowSize', async (data) => {
-      await browser.changeViewport(data);
+    socket.on('createUser', (data) => {
+        if (data.register) {
+            UserService.create(data)
+                .then(user => {
+                    socket.emit('userCreated', {msg: `${data.email} was successfully created!`, type: 'success'});
+                })
+                .catch(err => {
+                    socket.emit('userCreated', {msg: `${data.email} could not be created!`, type: 'error'});
+                });
+        } else {
+            UserService.authenticate(data.email, data.password)
+                .then(data => {
+                    if (data.isMatch) {
+                        let token = UserService.createJwt(data.user);
+                        socket.userId = data.user._id;
+                        socket.emit('jwt', token);
+                        socket.emit('userCreated', {msg: 'Successfully logged in!', type: 'success'});
+                    } else
+                        socket.emit('userCreated', {msg: 'Could not login!', type: 'error'});
+                });
+        }
     });
 
-    socket.on('click', async (data) => {
-      await browser.mouseClick(data);
-      //logger.info(`mouse click at ${data.x * scale}|${data.y * scale}`);
-    });
+    const communication = new CommunicationLayer(socket);
 
-    socket.on('keypress', async (data) => {
-      await browser.keypress(data);
-      logger.info(`key ${data} pressed`);
-    });
-
-    socket.on('scroll', async (data) => {
-      await browser.scrollPage(data);
-    });
-
-    socket.on('uri', async (data) => {
-      logger.info(`Redirecting to ${data}`);
-      await browser.urlChange(data);
-    });
-
-    socket.on('navigation', async (data) => {
-      await browser.navigation(data);
-    });
-
-    socket.on('disconnect', async () => {
-      logger.info(`${socket.id} disconnected`);
-      await browser.disconnect();
-    });
-
-  })();
-
+    communication.startListener();
 });
 </code></pre>
         </article>
@@ -182,7 +129,7 @@ io.on('connection', function(socket) {
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Sat Jan 26 2019 21:27:24 GMT+0100 (GMT+01:00) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Sun Feb 03 2019 18:45:42 GMT+0100 (STD) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
 </footer>
 
 <script>prettyPrint();</script>

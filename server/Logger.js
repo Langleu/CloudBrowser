@@ -23,11 +23,23 @@ const config = {
     },
 };
 
+/**
+ * @class
+ * Logger class, which allows us to log with colors.
+ */
 class Logger {
+    /**
+     * @constructor
+     * @description adds the color palette to the winston module.
+     */
     constructor() {
         winston.addColors(config.colors);
     }
 
+    /**
+     * @description initializes winston.
+     * @returns {Logger}
+     */
     init() {
         return winston.createLogger({
             levels: config.levels,

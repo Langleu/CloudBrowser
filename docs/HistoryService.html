@@ -3,7 +3,7 @@
 <head>
     
     <meta charset="utf-8">
-    <title>Global - Cloud Browser Documentation</title>
+    <title>HistoryService - Cloud Browser Documentation</title>
     
     
     
@@ -36,7 +36,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">Global</h1>
+    <h1 class="page-title">HistoryService</h1>
     
 
     
@@ -49,8 +49,10 @@
 <header>
     
         <h2>
-        
+        HistoryService
         </h2>
+        
+            <div class="class-description"><p>The HistoryService implementation which is the abstraction of the HistoryModel.</p></div>
         
     
 </header>
@@ -61,8 +63,24 @@
         
             
 
+    
+    <h2>Constructor</h2>
+    
+
+    <h4 class="name" id="HistoryService"><span class="type-signature"></span>new HistoryService<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+
 <dl class="details">
 
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="server_services_HistoryService.js.html">server/services/HistoryService.js</a>, <a href="server_services_HistoryService.js.html#line7">line 7</a>
+    </li></ul></dd>
     
 
     
@@ -99,9 +117,31 @@
 
 
 
-            
 
-            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         
         </div>
     
@@ -121,7 +161,7 @@
 
         
             
-<h4 class="name" id="nuxtConfig"><span class="type-signature"></span>nuxtConfig<span class="type-signature"></span></h4>
+<h4 class="name" id="create"><span class="type-signature"></span>create<span class="type-signature"></span></h4>
 
 
 
@@ -132,7 +172,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="server.js.html">server.js</a>, <a href="server.js.html#line13">line 13</a>
+        <a href="server_services_HistoryService.js.html">server/services/HistoryService.js</a>, <a href="server_services_HistoryService.js.html#line17">line 17</a>
     </li></ul></dd>
     
 
@@ -172,7 +212,7 @@
 
 
 <div class="description">
-    <p>requires the nuxt config</p>
+    <p>creates an entry.</p>
 </div>
 
 
@@ -184,7 +224,7 @@
 
         
             
-<h4 class="name" id="options"><span class="type-signature">(constant) </span>options<span class="type-signature"></span></h4>
+<h4 class="name" id="findById"><span class="type-signature"></span>findById<span class="type-signature"></span></h4>
 
 
 
@@ -195,7 +235,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="server_headlessBrowser_strategies_PuppeteerStrategy.js.html">server/headlessBrowser/strategies/PuppeteerStrategy.js</a>, <a href="server_headlessBrowser_strategies_PuppeteerStrategy.js.html#line7">line 7</a>
+        <a href="server_services_HistoryService.js.html">server/services/HistoryService.js</a>, <a href="server_services_HistoryService.js.html#line32">line 32</a>
     </li></ul></dd>
     
 
@@ -235,7 +275,7 @@
 
 
 <div class="description">
-    <p>Chrome Options</p>
+    <p>find entry by given id.</p>
 </div>
 
 
@@ -247,7 +287,7 @@
 
         
             
-<h4 class="name" id="scale"><span class="type-signature"></span>scale<span class="type-signature"></span></h4>
+<h4 class="name" id="findByUserId"><span class="type-signature"></span>findByUserId<span class="type-signature"></span></h4>
 
 
 
@@ -258,7 +298,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="server_headlessBrowser_strategies_PuppeteerStrategy.js.html">server/headlessBrowser/strategies/PuppeteerStrategy.js</a>, <a href="server_headlessBrowser_strategies_PuppeteerStrategy.js.html#line23">line 23</a>
+        <a href="server_services_HistoryService.js.html">server/services/HistoryService.js</a>, <a href="server_services_HistoryService.js.html#line45">line 45</a>
     </li></ul></dd>
     
 
@@ -298,7 +338,7 @@
 
 
 <div class="description">
-    <p>MacOS adjustment due to fake screen size</p>
+    <p>find x entries with descending sorting to get the latest entries.</p>
 </div>
 
 

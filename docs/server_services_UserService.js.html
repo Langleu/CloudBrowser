@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <title>server/services/UserService.js - Cloud Browser Documentation</title>
+    
+    
+    
+    
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav >
+    
+    <input type="text" id="nav-search" placeholder="Search" />
+    
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="CommunicationLayer.html">CommunicationLayer</a></li><li><a href="GenericStrategy.html">GenericStrategy</a></li><li><a href="HeadlessBrowser.html">HeadlessBrowser</a></li><li><a href="historySchema.html">historySchema</a></li><li><a href="HistoryService.html">HistoryService</a></li><li><a href="Logger.html">Logger</a><ul class='methods'><li data-type='method'><a href="Logger.html#init">init</a></li></ul></li><li><a href="PuppeteerStrategy.html">PuppeteerStrategy</a></li><li><a href="userSchema.html">userSchema</a></li><li><a href="UserService.html">UserService</a></li></ul><h3>Global</h3><ul><li><a href="global.html#nuxtConfig">nuxtConfig</a></li><li><a href="global.html#options">options</a></li><li><a href="global.html#scale">scale</a></li></ul>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">server/services/UserService.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>const UserModel = require('./../models/Users');
+const jwt = require('jsonwebtoken');
+
+const secret = process.env.SECRET || 'secret';
+
+/**
+ * @class
+ * The UserService implementation which is the abstraction for the UserModel.
+ */
+class UserService {
+    constructor() {
+
+    }
+
+    /**
+     * @description creates a user.
+     * @param data consists of email and password.
+     * @returns user
+     */
+    create = (data) => {
+      return UserModel.create(data)
+          .then(user => {
+              return user;
+          })
+          .catch(err => {
+             throw err;
+          });
+    };
+
+    /**
+     * @description find database entry through userId.
+     * @param id
+     * @returns {Promise&lt;any | never>}
+     */
+    findById = (id) => {
+        return UserModel.findById(id).exec()
+            .then(user => {
+                return user;
+            });
+    };
+
+    /**
+     * @description find database entry through email.
+     * @param email
+     * @returns {Promise&lt;any | never>}
+     */
+    findByEmail = (email) => {
+        return UserModel.findOne({email: email}).exec()
+            .then(user => {
+                return user;
+            })
+    };
+
+    /**
+     * @description find entry and update it.
+     * @param email
+     * @param data
+     * @returns {Promise&lt;any | never>}
+     */
+    findByEmailAndUpdate = (email, data) => {
+        return UserModel.findOneAndUpdate({email: email}, data).exec()
+            .then(user => {
+                return user;
+            });
+    };
+
+    /**
+     * @description authenticate email/password combo.
+     * @param email
+     * @param password
+     * @returns {Promise&lt;any | never | never>}
+     */
+    authenticate = (email, password) => {
+      return this.findByEmail(email)
+          .then(user => {
+              return user.comparePassword(password)
+                  .then(isMatch => {
+                      return {user, isMatch};
+                  });
+          })
+          .catch(err => {
+              throw new err;
+          });
+    };
+
+    /**
+     * @description creates jwt from given user object.
+     * @param user
+     * @returns {*}
+     */
+    createJwt = (user) => {
+        return jwt.sign({
+                email: user.email,
+                _id: user._id
+            },
+            secret,
+            {
+                expiresIn: '30d'
+            });
+    };
+
+    /**
+     * @description verifies that the jwt is still valid.
+     * @param token
+     * @returns {*}
+     */
+    verifyJwt = (token) => {
+        return jwt.verify(token, secret, (err) => {
+            return !err;
+        });
+    };
+
+    /**
+     * @description decodes a jwt back to json object.
+     * @param token
+     * @returns {*}
+     */
+    decodeJwt = (token) => {
+        return jwt.decode(token);
+    };
+}
+
+module.exports = new UserService();
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+    
+    
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Sun Feb 03 2019 18:45:42 GMT+0100 (STD) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+
+<script src="scripts/jquery-3.1.1.min.js"></script>
+
+<script src="scripts/search.js"></script>
+
+
+
+
+</body>
+</html>

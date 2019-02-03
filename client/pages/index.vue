@@ -1,25 +1,54 @@
 <template>
     <div>
-        <h1>Welcome!</h1>
-        <nuxt-link to="/cloud-browser">Cloud Browser</nuxt-link>
-        <nuxt-link to="/about">About page</nuxt-link>
+    <div class="background centerX">
+        <sui-grid centered vertical-align="middle">
+            <sui-grid-column>
 
-        <sui-input v-model="email" />
-        <sui-input v-model="password" />
-        <sui-checkbox v-model="register" label="register?"/>
-        <sui-button animated @click="handleSubmit">
-            <sui-button-content visible>Login</sui-button-content>
-            <sui-button-content hidden>
-                <sui-icon name="right arrow" />
-            </sui-button-content>
-        </sui-button>
+                <h2 is="sui-header" color="teal">
+                    <sui-header-content>CloudBrowser</sui-header-content>
+                </h2>
+
+                <sui-segment stacked>
+                    <sui-input
+                            v-model="email"
+                            type="username"
+                            placeholder="Username"
+                            icon="user"
+                            icon-position="left"/>
+                    <br>
+                    <sui-input
+                            v-model="password"
+                            type="password"
+                            placeholder="Password"
+                            icon="lock"
+                            icon-position="left"/>
+                    <br>
+                    <sui-checkbox v-model="register" label="register?"/>
+                    <sui-divider />
+
+                    <sui-button color="teal" fluid animated @click="handleSubmit">
+                        <sui-button-content visible>Login</sui-button-content>
+                        <sui-button-content hidden>
+                            <sui-icon name="right arrow"/>
+                        </sui-button-content>
+                    </sui-button>
+                </sui-segment>
+            </sui-grid-column>
+        </sui-grid>
+    </div>
+        <sui-menu fixed="bottom">
+            <sui-menu-item position="right" item icon="github" simple @click="github" />
+        </sui-menu>
     </div>
 </template>
 
 <script>
+    import SuiGridColumn from "semantic-ui-vue/dist/commonjs/collections/Grid/GridColumn";
+
     const Cookie = process.client ? require('js-cookie') : undefined;
 
     export default {
+        components: {SuiGridColumn},
         middleware: 'notAuthenticated',
         data() {
             return {
@@ -58,9 +87,14 @@
                     this.showCreationError({title: '', message: 'Password is missing'});
 
                 if (this.email && this.password)
-                    this.$socket.emit('createUser', {email: this.email, password: this.password, register: this.register });
-            }
-        },
+                    this.$socket.emit('createUser', {
+                        email: this.email,
+                        password: this.password,
+                        register: this.register
+                    });
+            },
+            github() { window.open('https://github.com/Langleu/CloudBrowser', '_blank') }
+    },
         notifications: {
             showCreationSuccess: {
                 title: 'User created',

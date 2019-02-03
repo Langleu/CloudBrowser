@@ -3,7 +3,7 @@
 <head>
     
     <meta charset="utf-8">
-    <title>Global - Cloud Browser Documentation</title>
+    <title>CommunicationLayer - Cloud Browser Documentation</title>
     
     
     
@@ -36,7 +36,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">Global</h1>
+    <h1 class="page-title">CommunicationLayer</h1>
     
 
     
@@ -49,8 +49,10 @@
 <header>
     
         <h2>
-        
+        CommunicationLayer
         </h2>
+        
+            <div class="class-description"><p>The CommunicationLayer consists of mostly event listeners and is the heart of the client/server communication.</p></div>
         
     
 </header>
@@ -61,8 +63,24 @@
         
             
 
+    
+    <h2>Constructor</h2>
+    
+
+    <h4 class="name" id="CommunicationLayer"><span class="type-signature"></span>new CommunicationLayer<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+
 <dl class="details">
 
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="server_CommunicationLayer.js.html">server/CommunicationLayer.js</a>, <a href="server_CommunicationLayer.js.html#line8">line 8</a>
+    </li></ul></dd>
     
 
     
@@ -99,9 +117,31 @@
 
 
 
-            
 
-            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         
         </div>
     
@@ -121,7 +161,7 @@
 
         
             
-<h4 class="name" id="nuxtConfig"><span class="type-signature"></span>nuxtConfig<span class="type-signature"></span></h4>
+<h4 class="name" id="startListener"><span class="type-signature"></span>startListener<span class="type-signature"></span></h4>
 
 
 
@@ -132,7 +172,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="server.js.html">server.js</a>, <a href="server.js.html#line13">line 13</a>
+        <a href="server_CommunicationLayer.js.html">server/CommunicationLayer.js</a>, <a href="server_CommunicationLayer.js.html#line21">line 21</a>
     </li></ul></dd>
     
 
@@ -172,133 +212,7 @@
 
 
 <div class="description">
-    <p>requires the nuxt config</p>
-</div>
-
-
-
-
-
-
-
-
-        
-            
-<h4 class="name" id="options"><span class="type-signature">(constant) </span>options<span class="type-signature"></span></h4>
-
-
-
-
-
-<dl class="details">
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="server_headlessBrowser_strategies_PuppeteerStrategy.js.html">server/headlessBrowser/strategies/PuppeteerStrategy.js</a>, <a href="server_headlessBrowser_strategies_PuppeteerStrategy.js.html#line7">line 7</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-<div class="description">
-    <p>Chrome Options</p>
-</div>
-
-
-
-
-
-
-
-
-        
-            
-<h4 class="name" id="scale"><span class="type-signature"></span>scale<span class="type-signature"></span></h4>
-
-
-
-
-
-<dl class="details">
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="server_headlessBrowser_strategies_PuppeteerStrategy.js.html">server/headlessBrowser/strategies/PuppeteerStrategy.js</a>, <a href="server_headlessBrowser_strategies_PuppeteerStrategy.js.html#line23">line 23</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-<div class="description">
-    <p>MacOS adjustment due to fake screen size</p>
+    <p>starts to listen to all those various events.</p>
 </div>
 
 

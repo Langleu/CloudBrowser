@@ -52,7 +52,7 @@ Stick to screenshots as requested from our supervisor.
 - [x] clean up code
 - [x] use css framework
 - [x] switch to winston
-- [ ] pseudo accounts
-    - [ ] sessions
+- [x] pseudo accounts
+    - [x] sessions
 - [ ] adjust puppeteer for better performance
 - [ ] ...

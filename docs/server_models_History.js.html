@@ -3,7 +3,7 @@
 <head>
     
     <meta charset="utf-8">
-    <title>Home - Cloud Browser Documentation</title>
+    <title>server/models/History.js - Cloud Browser Documentation</title>
     
     
     
@@ -36,25 +36,39 @@
 
 <div id="main">
     
+    <h1 class="page-title">server/models/History.js</h1>
+    
 
     
 
 
 
     
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import mongoose, {Schema} from 'mongoose';
 
+/**
+ * @class
+ * @description describes the history model, which is used for every visited entry.
+ * @param url String
+ * @param userId ObjectId
+ * @param date Integer
+ */
+export const historySchema = new Schema({
+        url: { type: String },
+        userId: { type: Schema.Types.ObjectId, ref: 'user' },
+        date: { type: Date, default: Date.now }
+    },
+    {collection: 'history'}
+);
 
+historySchema.index({userId: 1});
 
-
-
-
-
-
-
-    
-
-
-
+module.exports = mongoose.model('History', historySchema);
+</code></pre>
+        </article>
+    </section>
 
 
 
