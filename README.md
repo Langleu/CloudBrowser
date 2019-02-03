@@ -68,8 +68,8 @@ This and the fact that it took 100-200ms to process the diff made it unusable fo
 As we generate up to 30 images per second it would take an additional 3-6 seconds to calculate the difference of all images.
 
 ### input images
-![1](test/server/imgdiff/a.jpg)
-![2](test/server/imgdiff/b.jpg)
+![1](https://raw.githubusercontent.com/Langleu/CloudBrowser/master/test/server/imgdiff/a.jpg)
+![2](https://raw.githubusercontent.com/Langleu/CloudBrowser/master/test/server/imgdiff/b.jpg)
 
 ### outcome
-![outcome](test/server/imgdiff/output.jpg)
+![outcome](https://raw.githubusercontent.com/Langleu/CloudBrowser/master/test/server/imgdiff/output.jpg)
