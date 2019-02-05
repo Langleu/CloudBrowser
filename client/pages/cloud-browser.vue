@@ -1,5 +1,7 @@
 <template>
     <div>
+        <history :items="items" ref="modal" />
+
         <sui-menu borderless>
             <sui-menu-menu position="left">
                 <sui-button-group icons size="small">
@@ -21,6 +23,7 @@
                             @keyup.enter.native="submitUrl"/>
                 </sui-menu-item>
             </sui-menu-menu>
+
             <sui-menu-menu position="right">
                 <sui-dropdown
                         id="bwhite"
@@ -29,14 +32,17 @@
                         button
                 >
                     <sui-dropdown-menu>
-                        <sui-dropdown-item>FPS</sui-dropdown-item>
+                        <sui-dropdown-item>
+                            <sui-button id="bwhite" @click.native="requestHistory()">History</sui-button>
+                        </sui-dropdown-item>
                         <sui-dropdown-item>
                             <sui-button id="bwhite" animated @click="logout">
                             <sui-button-content visible>Logout</sui-button-content>
                             <sui-button-content hidden>
                                 <sui-icon name="right arrow" />
                             </sui-button-content>
-                        </sui-button></sui-dropdown-item>
+                        </sui-button>
+                        </sui-dropdown-item>
                     </sui-dropdown-menu>
                 </sui-dropdown>
             </sui-menu-menu>
@@ -46,15 +52,15 @@
             <img id="photo"/>
         </sui-segment>
 
-        <!--<h1>Welcome!</h1>
-        <nuxt-link to="/about">About page</nuxt-link> -->
     </div>
 </template>
 
 <script>
+    import History from "../components/history";
     const Cookie = process.client ? require('js-cookie') : undefined;
 
     export default {
+        components: {History},
         middleware: 'authenticated',
         sockets: {
             requestScreen(data) {
@@ -88,6 +94,10 @@
             urlChange(data) {
               this.uri = data.url;
             },
+            receiveHistory(data) {
+                this.items = data;
+                this.$refs.modal.toggle();
+            }
         },
         data() {
             return {
@@ -95,6 +105,7 @@
                 focused: false,
                 fps: 0,
                 tempFps: 0,
+                items: null
             };
         },
         beforeMount() {},
@@ -171,6 +182,9 @@
                 Cookie.remove('jwt');
                 this.$store.commit('setJwt', null);
                 this.$router.push('/');
+            },
+            requestHistory() {
+                this.$socket.emit('requestHistory', true);
             }
         },
     };

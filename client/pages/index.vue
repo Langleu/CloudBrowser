@@ -47,6 +47,7 @@
 
     const Cookie = process.client ? require('js-cookie') : undefined;
 
+
     export default {
         components: {SuiGridColumn},
         middleware: 'notAuthenticated',
@@ -54,7 +55,14 @@
             return {
                 email: undefined,
                 password: undefined,
-                register: false
+                register: false,
+                items: [{
+                    url: "test",
+                    date: "yesterday"
+                },{
+                    url: "test2",
+                    date: "today"
+                }]
             };
         },
         sockets: {

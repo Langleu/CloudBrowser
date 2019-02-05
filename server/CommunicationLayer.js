@@ -1,5 +1,6 @@
 const HeadlessBrowser = require('./headlessBrowser/HeadlessBrowser');
 const logger = require('./Logger');
+const HistoryService = require('./services/HistoryService');
 
 /**
  * @class
@@ -69,6 +70,11 @@ class CommunicationLayer {
 
         this.socket.on('navigation', async (data) => {
             await this.browser.navigation(data);
+        });
+
+        this.socket.on('requestHistory', async (data) => {
+            let history = await HistoryService.findByUserId(this.socket.userId, 10);
+            this.socket.emit('receiveHistory', history);
         });
 
         this.socket.on('disconnectBrowser', async () => {

@@ -43,7 +43,7 @@ class HistoryService {
      * @returns {Promise<any | never>}
      */
     findByUserId = (userId, limit) => {
-        return HistoryService.find({userId: userId}).limit(limit).sort({date: -1}).exec()
+        return HistoryModel.find({userId: userId}).limit(limit).sort({date: -1}).exec()
             .then(history => {
                 return history;
             })
