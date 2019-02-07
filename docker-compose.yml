@@ -8,3 +8,12 @@ services:
       - ./:/cloud-browser
     ports:
       - "3000:3000"
+    environment:
+      - DB_URL=mongodb://mongodb:27017/cloud_browser
+    links:
+      - mongodb
+    depends_on:
+      - mongodb
+
+  mongodb:
+    image: mongo:latest
