@@ -1,7 +1,5 @@
 <template>
     <div>
-        <history :items="items" ref="modal" />
-
         <sui-menu borderless>
             <sui-menu-menu position="left">
                 <sui-button-group icons size="small">
@@ -52,6 +50,7 @@
             <img id="photo"/>
         </sui-segment>
 
+        <history :items="items" ref="modal" />
     </div>
 </template>
 

@@ -150,10 +150,10 @@ class PuppeteerStrategy extends GenericStrategy {
   scrollPage = async (data) => {
     (data === 'down') ?
         await this.page.evaluate(() => {
-          window.scrollBy(0, 10);
+          window.scrollBy(0, 25);
         }) :
         await this.page.evaluate(() => {
-          window.scrollBy(0, -10);
+          window.scrollBy(0, -25);
         });
   };
 
