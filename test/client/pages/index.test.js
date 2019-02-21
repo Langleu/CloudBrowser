@@ -19,7 +19,7 @@ test.before(async () => {
 test('Route / exits and render HTML', async (t) => {
     const context = {};
     const { html } = await nuxt.server.renderRoute('/', context);
-    t.true(html.includes('<h2>CloudBrowser</h2>'))
+    t.true(html.includes('<h2 class="ui teal header"><div class="content">CloudBrowser</div></h2>'))
 });
 
 // Example of testing via dom checking
