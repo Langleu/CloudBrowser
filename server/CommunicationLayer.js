@@ -16,7 +16,7 @@ class CommunicationLayer {
     }
 
     /**
-     * @description starts to listen to all those various events.
+     * @description starts to listen to all those various events, including Keypress, mouse clicks, ...
      * @returns {Promise<void>}
      */
     startListener = async () => {

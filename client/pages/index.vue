@@ -69,10 +69,7 @@
             connect() {
                 console.log('socket connected');
             },
-            hallo(val) {
-                console.log(val);
-            },
-            userCreated(data) {
+            authUser(data) {
                 data.type === 'success' ? this.showCreationSuccess({message: data.msg}) : this.showCreationError({message: data.msg});
             },
             jwt(token) {
@@ -82,7 +79,6 @@
             }
         },
         beforeMount() {
-            this.$socket.emit('hallo', 'hallo');
             let token = Cookie.get('jwt');
             if (token)
                 this.$socket.emit('checkJwt', token);
@@ -95,7 +91,7 @@
                     this.showCreationError({title: '', message: 'Password is missing'});
 
                 if (this.email && this.password)
-                    this.$socket.emit('createUser', {
+                    this.$socket.emit('authenticateUser', {
                         email: this.email,
                         password: this.password,
                         register: this.register

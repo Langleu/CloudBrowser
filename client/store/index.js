@@ -3,6 +3,11 @@ import atob from 'atob';
 
 const cookieparser = process.server ? require('cookieparser') : undefined;
 
+/**
+ * parses the JWT to receive the information that is in the JWT.
+ * @param token
+ * @returns {any}
+ */
 const parseJwt = (token) => {
     if (token === null)
         return;
@@ -11,6 +16,10 @@ const parseJwt = (token) => {
     return JSON.parse(atob(base64));
 };
 
+/**
+ * creates the Vuex store for state management.
+ * @returns {Store<{jwt: null, userId: null, email: null}>}
+ */
 const createStore = () => {
     return new Vuex.Store({
         state: {

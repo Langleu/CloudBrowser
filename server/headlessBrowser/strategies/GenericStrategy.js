@@ -1,6 +1,6 @@
 /**
  * @class
- * Generic Strategy which other Stragies have to follow.
+ * Generic Strategy which other Stragies have to follow. Explanations per method can be found in the PuppeteerStrategy.
  */
 class GenericStrategy {
   /**

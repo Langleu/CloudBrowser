@@ -31,7 +31,7 @@
     
     <input type="text" id="nav-search" placeholder="Search" />
     
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="CommunicationLayer.html">CommunicationLayer</a></li><li><a href="GenericStrategy.html">GenericStrategy</a></li><li><a href="HeadlessBrowser.html">HeadlessBrowser</a></li><li><a href="historySchema.html">historySchema</a></li><li><a href="HistoryService.html">HistoryService</a></li><li><a href="Logger.html">Logger</a><ul class='methods'><li data-type='method'><a href="Logger.html#init">init</a></li></ul></li><li><a href="PuppeteerStrategy.html">PuppeteerStrategy</a></li><li><a href="userSchema.html">userSchema</a></li><li><a href="UserService.html">UserService</a></li></ul><h3>Global</h3><ul><li><a href="global.html#nuxtConfig">nuxtConfig</a></li><li><a href="global.html#options">options</a></li><li><a href="global.html#scale">scale</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="CommunicationLayer.html">CommunicationLayer</a></li><li><a href="GenericStrategy.html">GenericStrategy</a></li><li><a href="HeadlessBrowser.html">HeadlessBrowser</a></li><li><a href="historySchema.html">historySchema</a></li><li><a href="HistoryService.html">HistoryService</a></li><li><a href="Logger.html">Logger</a><ul class='methods'><li data-type='method'><a href="Logger.html#init">init</a></li></ul></li><li><a href="PuppeteerStrategy.html">PuppeteerStrategy</a></li><li><a href="userSchema.html">userSchema</a></li><li><a href="UserService.html">UserService</a></li></ul><h3>Global</h3><ul><li><a href="global.html#checkLatency">checkLatency</a></li><li><a href="global.html#createStore">createStore</a></li><li><a href="global.html#getDiff">getDiff</a></li><li><a href="global.html#nuxtConfig">nuxtConfig</a></li><li><a href="global.html#options">options</a></li><li><a href="global.html#parseJwt">parseJwt</a></li><li><a href="global.html#runBenchmark">runBenchmark</a></li><li><a href="global.html#scale">scale</a></li></ul>
 </nav>
 
 <div id="main">
@@ -66,30 +66,20 @@
 <h2>Getting Started</h2><p>Documentation can be found <a href="https://langleu.github.io/CloudBrowser/">here</a>.</p>
 <h3>Prerequisites</h3><pre class="prettyprint source"><code>Node.js >= v8</code></pre><h3>Installing</h3><p>Ubuntu/Debian needs the following dependencies</p>
 <pre class="prettyprint source"><code>sudo apt-get install gconf-service libasound2 libatk1.0-0 libatk-bridge2.0-0 libc6 libcairo2 libcups2 libdbus-1-3 libexpat1 libfontconfig1 libgcc1 libgconf-2-4 libgdk-pixbuf2.0-0 libglib2.0-0 libgtk-3-0 libnspr4 libpango-1.0-0 libpangocairo-1.0-0 libstdc++6 libx11-6 libx11-xcb1 libxcb1 libxcomposite1 libxcursor1 libxdamage1 libxext6 libxfixes3 libxi6 libxrandr2 libxrender1 libxss1 libxtst6 ca-certificates fonts-liberation libappindicator1 libnss3 lsb-release xdg-utils wget</code></pre><pre class="prettyprint source"><code>git clone https://github.com/Langleu/CloudBrowser</code></pre><pre class="prettyprint source"><code>cd CloudBrowser</code></pre><pre class="prettyprint source"><code>npm install</code></pre><h3>Start</h3><pre class="prettyprint source"><code>npm run dev</code></pre><p>or</p>
-<pre class="prettyprint source"><code>docker-compuse up</code></pre><h3>Limitations</h3><p>Current Limitations:</p>
+<pre class="prettyprint source"><code>docker-compose up</code></pre><h3>Limitations</h3><p>Current Limitations:</p>
 <p>Running it on MacOS as server is currently limited to 6 fps same for Windows.
-Linux has reached 25 fps in current tests.</p>
+Linux has reached 25 fps in current tests. (solely based on the device resolution)</p>
 <p>Stick to screenshots as requested from our supervisor.</p>
-<h2>ToDos</h2><ul>
-<li>[x] use SSR with React/Vue or Templating Engine</li>
-<li>[x] clean up code</li>
-<li>[x] use css framework</li>
-<li>[x] switch to winston</li>
-<li>[x] pseudo accounts<ul>
-<li>[x] sessions</li>
-</ul>
-</li>
-<li>[x] test out diffs of images</li>
-</ul>
-<h2>Diffs of images</h2><p>We used several implementations to get the diff image of 2 initial images.
+<h2>Benchmarks</h2><h3>Diffs of images</h3><p>We used several implementations to get the diff image of 2 initial images.
 The Goal was to just send the diff of 2 images to save space.</p>
 <p>We used <a href="https://github.com/rsmbl/Resemble.js">Resemble.js</a> as it provided a good and simple module to get the pure difference of two images and not just an overlay.</p>
 <p>Both initial supplied images were ~135kb and the output image was almost 6 times bigger (762kb).
 This and the fact that it took 100-200ms to process the diff made it unusable for our project.</p>
 <p>As we generate up to 30 images per second it would take an additional 3-6 seconds to calculate the difference of all images.</p>
-<h3>input images</h3><p><img src="https://raw.githubusercontent.com/Langleu/CloudBrowser/master/test/server/imgdiff/a.jpg" alt="1">
+<h4>input images</h4><p><img src="https://raw.githubusercontent.com/Langleu/CloudBrowser/master/test/server/imgdiff/a.jpg" alt="1">
 <img src="https://raw.githubusercontent.com/Langleu/CloudBrowser/master/test/server/imgdiff/b.jpg" alt="2"></p>
-<h3>outcome</h3><p><img src="https://raw.githubusercontent.com/Langleu/CloudBrowser/master/test/server/imgdiff/output.jpg" alt="outcome"></p></article>
+<h4>outcome</h4><p><img src="https://raw.githubusercontent.com/Langleu/CloudBrowser/master/test/server/imgdiff/output.jpg" alt="outcome"></p>
+<h3>Misc</h3><p>Further results can be found in the project documentation.</p></article>
     </section>
 
 
@@ -104,7 +94,7 @@ This and the fact that it took 100-200ms to process the diff made it unusable fo
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Fri Feb 22 2019 19:06:43 GMT+0100 (STD) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Sun Feb 24 2019 15:02:30 GMT+0100 (STD) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
 </footer>
 
 <script>prettyPrint();</script>

@@ -5,6 +5,10 @@ const compareImages = require('resemblejs/compareImages');
 
 let diffTime = null;
 
+/**
+ * calculates the difference of two input images and saves the output to the filesystem.
+ * @returns {Promise<void>}
+ */
 const getDiff = async () => {
     const options = {
         output: {

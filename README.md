@@ -39,7 +39,7 @@ npm run dev
 ```
 or
 ````
-docker-compuse up
+docker-compose up
 ````
 
 ### Limitations
@@ -47,21 +47,12 @@ docker-compuse up
 Current Limitations:
 
 Running it on MacOS as server is currently limited to 6 fps same for Windows.
-Linux has reached 25 fps in current tests.
+Linux has reached 25 fps in current tests. (solely based on the device resolution)
 
 Stick to screenshots as requested from our supervisor.
 
-## ToDos
-
-- [x] use SSR with React/Vue or Templating Engine
-- [x] clean up code
-- [x] use css framework
-- [x] switch to winston
-- [x] pseudo accounts
-    - [x] sessions
-- [x] test out diffs of images
-
-## Diffs of images
+## Benchmarks
+### Diffs of images
 We used several implementations to get the diff image of 2 initial images.
 The Goal was to just send the diff of 2 images to save space.
 
@@ -72,9 +63,12 @@ This and the fact that it took 100-200ms to process the diff made it unusable fo
 
 As we generate up to 30 images per second it would take an additional 3-6 seconds to calculate the difference of all images.
 
-### input images
+#### input images
 ![1](https://raw.githubusercontent.com/Langleu/CloudBrowser/master/test/server/imgdiff/a.jpg)
 ![2](https://raw.githubusercontent.com/Langleu/CloudBrowser/master/test/server/imgdiff/b.jpg)
 
-### outcome
+#### outcome
 ![outcome](https://raw.githubusercontent.com/Langleu/CloudBrowser/master/test/server/imgdiff/output.jpg)
+
+### Misc
+Further results can be found in the project documentation.

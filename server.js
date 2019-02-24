@@ -32,6 +32,7 @@ io.on('connection', (socket) => {
     socket.id = Math.random().toString().substr(2, 16);
     logger.info(`${socket.id} connected`);
 
+    // checks whether the JWT is still valid
     socket.on('checkJwt', (token) => {
         if (UserService.verifyJwt(token)) {
             let user = UserService.decodeJwt(token);
@@ -40,14 +41,16 @@ io.on('connection', (socket) => {
         }
     });
 
-    socket.on('createUser', (data) => {
+    // authenticates the user and creates a JWT
+    socket.on('authenticateUser', (data) => {
+        // if the user registers otherwise the login case is used.
         if (data.register) {
             UserService.create(data)
                 .then(user => {
-                    socket.emit('userCreated', {msg: `${data.email} was successfully created!`, type: 'success'});
+                    socket.emit('authUser', {msg: `${data.email} was successfully created!`, type: 'success'});
                 })
                 .catch(err => {
-                    socket.emit('userCreated', {msg: `${data.email} could not be created!`, type: 'error'});
+                    socket.emit('authUser', {msg: `${data.email} could not be created!`, type: 'error'});
                 });
         } else {
             UserService.authenticate(data.email, data.password)
@@ -56,9 +59,9 @@ io.on('connection', (socket) => {
                         let token = UserService.createJwt(data.user);
                         socket.userId = data.user._id;
                         socket.emit('jwt', token);
-                        socket.emit('userCreated', {msg: 'Successfully logged in!', type: 'success'});
+                        socket.emit('authUser', {msg: 'Successfully logged in!', type: 'success'});
                     } else
-                        socket.emit('userCreated', {msg: 'Could not login!', type: 'error'});
+                        socket.emit('authUser', {msg: 'Could not login!', type: 'error'});
                 });
         }
     });

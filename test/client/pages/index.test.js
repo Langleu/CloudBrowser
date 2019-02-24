@@ -1,4 +1,3 @@
-import { resolve } from 'path';
 import { Nuxt, Builder } from 'nuxt-edge';
 import { JSDOM } from 'jsdom';
 import test from 'ava';

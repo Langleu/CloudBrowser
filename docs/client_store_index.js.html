@@ -3,7 +3,7 @@
 <head>
     
     <meta charset="utf-8">
-    <title>historySchema - Cloud Browser Documentation</title>
+    <title>client/store/index.js - Cloud Browser Documentation</title>
     
     
     
@@ -36,221 +36,76 @@
 
 <div id="main">
     
-    <h1 class="page-title">historySchema</h1>
+    <h1 class="page-title">client/store/index.js</h1>
     
 
     
 
 
 
-
-<section>
-
-<header>
     
-        <h2>
-        historySchema
-        </h2>
-        
-    
-</header>
-
-<article>
-    
-        <div class="container-overview">
-        
-            
-
-    
-
-    <h4 class="name" id="historySchema"><span class="type-signature"></span>new historySchema<span class="signature">(url, userId, date)</span><span class="type-signature"></span></h4>
-
-    
-
-
-
-
-<dl class="details">
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="server_models_History.js.html">server/models/History.js</a>, <a href="server_models_History.js.html#line10">line 10</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-<div class="description">
-    <p>describes the history model, which is used for every visited entry.</p>
-</div>
-
-
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>url</code></td>
-            
-
-            <td class="type">
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>String</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>userId</code></td>
-            
-
-            <td class="type">
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>ObjectId</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>date</code></td>
-            
-
-            <td class="type">
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>Integer</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-        </div>
-    
-
-    
-
-    
-
-    
-    
-    
-
-     
-
-    
-
-    
-
-    
-
-    
-
-    
-</article>
-
-</section>
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import Vuex from 'vuex';
+import atob from 'atob';
+
+const cookieparser = process.server ? require('cookieparser') : undefined;
+
+/**
+ * parses the JWT to receive the information that is in the JWT.
+ * @param token
+ * @returns {any}
+ */
+const parseJwt = (token) => {
+    if (token === null)
+        return;
+    let base64Url = token.split('.')[1];
+    let base64 = base64Url.replace('-', '+').replace('_', '/');
+    return JSON.parse(atob(base64));
+};
+
+/**
+ * creates the Vuex store for state management.
+ * @returns {Store&lt;{jwt: null, userId: null, email: null}>}
+ */
+const createStore = () => {
+    return new Vuex.Store({
+        state: {
+            jwt: null,
+            userId: null,
+            email: null
+        },
+        mutations: {
+            setJwt(state, jwt) {
+                state.jwt = jwt;
+                let parsedJwt = parseJwt(jwt);
+                state.userId = (parsedJwt || {})._id;
+                state.email = (parsedJwt || {}).email;
+            }
+        },
+        actions: {
+            nuxtServerInit({ commit }, { req }) {
+                let jwt = null;
+                if (req) {
+                    if (req.headers.cookie) {
+                        const parsed = cookieparser.parse(req.headers.cookie);
+                        try {
+                            jwt = JSON.parse(parsed.jwt);
+                        } catch (err) {
+                            // No valid cookie found
+                        }
+                    }
+                    commit('setJwt', jwt);
+                }
+            }
+        }
+    })
+};
+
+export default createStore;
+</code></pre>
+        </article>
+    </section>
 
 
 
